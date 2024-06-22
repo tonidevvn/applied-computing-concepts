@@ -7,6 +7,7 @@ import ca.uwindsor.appliedcomputing.final_project.util.WebDriverHelper;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
 import com.opencsv.exceptions.CsvException;
+import com.sun.tools.javac.Main;
 import org.springframework.beans.factory.annotation.Value;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
@@ -18,6 +19,8 @@ import org.springframework.stereotype.Service;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.List;
@@ -50,10 +53,9 @@ public class ProductServiceImpl implements ProductService {
     public Set<ProductData> getProducts() {
         // init web driver
         webDriverInit();
-        String filePath = "./data/products_zehrs.csv";
 
         Set<ProductData> responseProducts = new HashSet<>();
-        try (CSVReader csvReader = new CSVReader(new FileReader(Paths.get(filePath).toFile()))) {
+        try (CSVReader csvReader = new CSVReader(new FileReader(Paths.get(Main.class.getClassLoader().getResource("data/products_zehrs.csv").toURI()).toFile()))) {
             List<String[]> records = csvReader.readAll();
             records.remove(0); // Remove header row
 
@@ -72,6 +74,8 @@ public class ProductServiceImpl implements ProductService {
             }
         } catch (IOException | CsvException e) {
             e.printStackTrace();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
         }
 
         return responseProducts;
