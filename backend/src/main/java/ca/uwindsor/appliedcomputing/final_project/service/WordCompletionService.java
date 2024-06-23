@@ -2,44 +2,18 @@ package ca.uwindsor.appliedcomputing.final_project.service;
 
 import ca.uwindsor.appliedcomputing.final_project.data_structure.AVLTreeWordFrequency;
 import ca.uwindsor.appliedcomputing.final_project.dto.WordFrequency;
-import com.sun.tools.javac.Main;
+import ca.uwindsor.appliedcomputing.final_project.util.Resource;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 public class WordCompletionService {
-    /**
-     * This method is used to walk through the resources directory and return a list of absolute paths of all regular files.
-     *
-     * @return A list of absolute paths of all regular files in the resources directory. If an exception occurs, it returns an empty list.
-     *
-     * @throws URISyntaxException If the URL of the class loader resource cannot be converted to a URI.
-     * @throws IOException If an I/O error is thrown when accessing the file tree.
-     */
-    public List<Path> walkResources() {
-        try {
-            Path resourcePath = Paths.get(Main.class.getClassLoader().getResource("data").toURI());
-            try (Stream<Path> paths = Files.walk(resourcePath)) {
-                return paths
-                        .filter(Files::isRegularFile)
-                        .map(Path::toAbsolutePath)
-                        .collect(Collectors.toList());
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return Collections.emptyList();
-        }
-    }
-
     /**
      * This method reads a CSV file from the given path and extracts all the words from it.
      * It reads the file line by line, splits each line into words, filters out non-alphabetic words and links,
@@ -182,7 +156,7 @@ public class WordCompletionService {
 
     public List<WordFrequency> getWordSuggestions(String prefix) {
         // Read all words from the CSV files in the resources directory
-        List<String> words = walkResources().stream()
+        List<String> words = Resource.walkResources().stream()
                 .flatMap(path -> readVocabularyFromCSV(path).stream())
                 .collect(Collectors.toList());
 
