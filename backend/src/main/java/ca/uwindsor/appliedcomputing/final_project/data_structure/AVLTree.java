@@ -46,6 +46,38 @@ public class AVLTree {
         avlTreeNode.height = 1 + Math.max(height(avlTreeNode.left), height(avlTreeNode.right));
         return balance(avlTreeNode);
     }
+    /**
+     * Checks if the AVL tree contains a specific keyword.
+     *
+     * @param keyword the keyword to search for
+     * @return true if the keyword is found, false otherwise
+     */
+    public boolean contains(String keyword) {
+        return contains(root, keyword);
+    }
+
+    /**
+     * Recursive helper method to check if a keyword exists in the AVL tree.
+     *
+     * @param node    the current node to check
+     * @param keyword the keyword to search for
+     * @return true if the keyword is found, false otherwise
+     */
+    private boolean contains(AVLTreeNode node, String keyword) {
+        if (node == null) {
+            return false;
+        }
+
+        int compareResult = keyword.compareTo(node.keyword);
+
+        if (compareResult < 0) {
+            return contains(node.left, keyword);
+        } else if (compareResult > 0) {
+            return contains(node.right, keyword);
+        } else {
+            return true; // Keyword found
+        }
+    }
 
     /**
      * Returns the height of the given node.
@@ -168,5 +200,30 @@ public class AVLTree {
             response.add(kwData);
         }
         return response;
+    }
+
+    /**
+     * Finds the frequency of a keyword in the AVL tree.
+     *
+     * @param keyword the keyword to find the frequency for
+     * @return the frequency of the keyword, or 0 if not found
+     */
+    public int findFrequency(String keyword) {
+        return findFrequency(keyword, root);
+    }
+
+    private int findFrequency(String keyword, AVLTreeNode node) {
+        while (node != null) {
+            int compareResult = keyword.compareTo(node.keyword);
+
+            if (compareResult < 0)
+                node = node.left;
+            else if (compareResult > 0)
+                node = node.right;
+            else
+                return node.frequency; // Match
+        }
+
+        return 0; // No match
     }
 }
