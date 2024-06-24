@@ -1,5 +1,6 @@
 package ca.uwindsor.appliedcomputing.final_project.service;
 
+import ca.uwindsor.appliedcomputing.final_project.dto.PageRankingData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -20,7 +21,7 @@ public class PageRankingServiceTest {
     public void testCalculatePageRanks() {
         String[] searchKeywords = {"pizza"};
 
-        List<String> topRankedProducts = pageRankingService.calculatePageRanks(searchKeywords);
+        List<PageRankingData> topRankedProducts = pageRankingService.calculatePageRanks(searchKeywords, 10);
         System.out.println(topRankedProducts);
         System.out.println(topRankedProducts.size());
 
@@ -28,5 +29,4 @@ public class PageRankingServiceTest {
         assertFalse(topRankedProducts.isEmpty());
         assertEquals(10, topRankedProducts.size());
     }
-
 }

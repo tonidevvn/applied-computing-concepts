@@ -1,6 +1,12 @@
 package ca.uwindsor.appliedcomputing.final_project.data_structure;
 
+import ca.uwindsor.appliedcomputing.final_project.dto.KeywordSearchData;
 import lombok.Data;
+
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.PriorityQueue;
+import java.util.Set;
 
 public class AVLTreeWordFrequency<T extends Comparable<? super T>> {
 
@@ -46,6 +52,8 @@ public class AVLTreeWordFrequency<T extends Comparable<? super T>> {
             node.left = insert(value, node.left);
         else if (compareResult > 0)
             node.right = insert(value, node.right);
+        else
+            node.frequency++;  // Duplicate; increment frequency
 
         return balance(node);
     }
@@ -138,6 +146,156 @@ public class AVLTreeWordFrequency<T extends Comparable<? super T>> {
     }
 
     /**
+     * Internal method to find the smallest item in a subtree.
+     * @param t the node that roots the tree.
+     * @return node containing the smallest item.
+     */
+    private AvlNode<T> findMin( AvlNode<T> t )
+    {
+        if( t == null )
+            return t;
+
+        while( t.left != null )
+            t = t.left;
+        return t;
+    }
+
+    public void inOrderTraversal(PriorityQueue<AvlNode<T>> maxHeap) {
+        inOrderTraversal(root, maxHeap);
+    }
+    /**
+     * Performs an in-order traversal of the subtree rooted at the given node.
+     * Adds each node to the max heap.
+     *
+     * @param t    the root of the subtree
+     * @param maxHeap the max heap to which nodes are added
+     */
+    private void inOrderTraversal(AvlNode<T> t, PriorityQueue<AvlNode<T>> maxHeap) {
+        if (t != null) {
+            inOrderTraversal(t.left, maxHeap);
+            maxHeap.add(t);
+            inOrderTraversal(t.right, maxHeap);
+        }
+    }
+
+    /**
+     * Internal method to find the largest item in a subtree.
+     * @param t the node that roots the tree.
+     * @return node containing the largest item.
+     */
+    private AvlNode<T> findMax( AvlNode<T> t )
+    {
+        if( t == null )
+            return t;
+
+        while( t.right != null )
+            t = t.right;
+        return t;
+    }
+
+    /**
+     * Find an item in the tree.
+     * @param x the item to search for.
+     * @return true if x is found.
+     */
+    public boolean contains( T x )
+    {
+        return contains( x, root );
+    }
+
+    /**
+     * Internal method to find an item in a subtree.
+     * @param x is item to search for.
+     * @param t the node that roots the tree.
+     * @return true if x is found in subtree.
+     */
+    private boolean contains( T x, AvlNode<T> t )
+    {
+        while( t != null )
+        {
+            int compareResult = x.compareTo( t.element );
+
+            if( compareResult < 0 )
+                t = t.left;
+            else if( compareResult > 0 )
+                t = t.right;
+            else
+                return true;    // Match
+        }
+
+        return false;   // No match
+    }
+
+    /**
+     * Get the frequency of an item in the tree.
+     * @param x the item to get the frequency for.
+     * @return the frequency of the item, or 0 if not found.
+     */
+    public int findFrequency( T x )
+    {
+        return findFrequency( x, root );
+    }
+
+    /**
+     * Internal method to get the frequency of an item in a subtree.
+     * @param x is item to search for.
+     * @param t the node that roots the tree.
+     * @return the frequency of the item in the subtree.
+     */
+    private int findFrequency( T x, AvlNode<T> t )
+    {
+        while( t != null )
+        {
+            int compareResult = x.compareTo( t.element );
+
+            if( compareResult < 0 )
+                t = t.left;
+            else if( compareResult > 0 )
+                t = t.right;
+            else
+                return t.frequency;    // Match
+        }
+
+        return 0;   // No match
+    }
+
+    /**
+     * Internal method to print a subtree in sorted order.
+     * @param t the node that roots the tree.
+     */
+    private void printTree( AvlNode<T> t )
+    {
+        if( t != null )
+        {
+            printTree( t.left );
+            System.out.println( t.element + " (" + t.frequency + ")" );
+            printTree( t.right );
+        }
+    }
+
+    /**
+     * Prints the top K most frequent keywords in the AVL tree.
+     *
+     * @param k the number of top frequent keywords to print
+     */
+    public Set<KeywordSearchData> getTopK(int k) {
+        Set<KeywordSearchData> response = new HashSet<>();
+        PriorityQueue<AvlNode<T>> maxHeap = new PriorityQueue<>((x, y) -> y.frequency - x.frequency);
+        inOrderTraversal(root, maxHeap);
+
+        for (int j = 0; j < k && !maxHeap.isEmpty(); j++) {
+            AvlNode<T> node = maxHeap.poll();
+            KeywordSearchData kwData = new KeywordSearchData();
+            kwData.setKeyword(node.element.toString());
+            kwData.setCount(node.frequency);
+            kwData.setSearchTime(LocalDateTime.now().toString());
+            response.add(kwData);
+        }
+        return response;
+    }
+
+
+    /**
      * Represents a node in the AVL tree.
      * @param <T> the type of element held in this node.
      */
@@ -147,6 +305,7 @@ public class AVLTreeWordFrequency<T extends Comparable<? super T>> {
         AvlNode<T> left;    // Left child
         AvlNode<T> right;   // Right child
         int height;         // Height of the node
+        int frequency;    // Frequency of the element
 
         /**
          * Constructs a node with the specified element and no children.
@@ -167,6 +326,7 @@ public class AVLTreeWordFrequency<T extends Comparable<? super T>> {
             this.left = left;
             this.right = right;
             this.height = 0;
+            this.frequency = 1;
         }
     }
 }

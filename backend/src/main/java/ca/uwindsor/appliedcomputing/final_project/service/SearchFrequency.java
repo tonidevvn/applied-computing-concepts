@@ -1,6 +1,7 @@
 package ca.uwindsor.appliedcomputing.final_project.service;
 
-import ca.uwindsor.appliedcomputing.final_project.data_structure.AVLTree;
+import ca.uwindsor.appliedcomputing.final_project.data_structure.AVLTreeWordFrequency;
+import ca.uwindsor.appliedcomputing.final_project.data_structure.AVLTreeWordFrequency.AvlNode;
 import ca.uwindsor.appliedcomputing.final_project.dto.KeywordSearchData;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
@@ -34,7 +35,7 @@ public class SearchFrequency {
      */
     private static final Map<String, Map<String, Integer>> keywordToUrlsMap = new HashMap<>();
 
-    private static AVLTree searchFrequencyTree = new AVLTree();
+    private static AVLTreeWordFrequency<String> searchFrequencyTree = new AVLTreeWordFrequency<>();
 
     private static final LinkedList<String> recentSearchQueries = new LinkedList<>();
 
@@ -193,48 +194,6 @@ public class SearchFrequency {
      * Handles search queries from the user.
      * Tracks the frequency of search queries and displays matching websites.
      * Displays the top 10 recent search queries and top 10 most frequent search queries.
-     */
-    public static void performSearchQueries() {
-        Scanner scanner = new Scanner(System.in);
-        searchFrequencyTree = new AVLTree();
-        recentSearchQueries.clear();
-
-        // in loop of search query until 'exit' typed
-        while (true) {
-            System.out.print("Enter search query (or type 'exit' to quit): ");
-            String query = scanner.nextLine();
-            if ("exit".equalsIgnoreCase(query)) {
-                break;
-            } else if (query.trim().isEmpty()) {
-                System.out.println("Search query must be filled out.");
-                continue;
-            }
-            // Trim the search query before processing
-            query = query.trim();
-
-            // Insert & update query count in the search tree
-            searchFrequencyTree.insert(query);
-            // Update recent search queries list
-            updateRecentSearchQueries(query);
-            // Display query result
-            displayMatchingWebsites(query);
-
-            System.out.println("=== Top 10 search queries ===");
-            System.out.println("[Search count]  Search queries");
-            searchFrequencyTree.printTopK(MAX_DISPLAY_QUERIES);
-            System.out.println();
-
-            System.out.println("=== Top 10 recent search queries ===");
-            printRecentSearchQueries();
-        }
-
-        scanner.close();
-    }
-
-    /**
-     * Handles search queries from the user.
-     * Tracks the frequency of search queries and displays matching websites.
-     * Displays the top 10 recent search queries and top 10 most frequent search queries.
      *
      * @return Set of Keyword Data
      */
@@ -264,8 +223,19 @@ public class SearchFrequency {
      *
      * @return a set of KeywordData representing the top search queries and their frequencies
      */
-    public static Set<KeywordSearchData> topSearchQueries() {
+    public static Set<KeywordSearchData> topSearchQueries(int limit) {
         Set<KeywordSearchData> response = new HashSet<>();
+        PriorityQueue<AvlNode<String>> maxHeap = new PriorityQueue<>((x, y) -> y.getFrequency() - x.getFrequency());
+        searchFrequencyTree.inOrderTraversal(maxHeap);
+
+        for (int j = 0; j < limit && !maxHeap.isEmpty(); j++) {
+            AVLTreeWordFrequency.AvlNode<String> node = maxHeap.poll();
+            KeywordSearchData kwData = new KeywordSearchData();
+            kwData.setKeyword(node.getElement());
+            kwData.setCount(node.getFrequency());
+            kwData.setSearchTime(LocalDateTime.now().toString());
+            response.add(kwData);
+        }
         return searchFrequencyTree.getTopK(MAX_DISPLAY_QUERIES);
     }
 
@@ -287,19 +257,5 @@ public class SearchFrequency {
             response.add(kwData);
         }
         return response;
-    }
-
-    /**
-     * The main method to start the SearchFrequency program.
-     * Loads keywords from the CSV file and handles user search queries.
-     *
-     * @param args command-line arguments (not used)
-     */
-    public static void main(String[] args) {
-        // Load keywords from CSV file(s) (data.csv)
-        initKwService();
-
-        // Handle search queries
-        performSearchQueries();
     }
 }

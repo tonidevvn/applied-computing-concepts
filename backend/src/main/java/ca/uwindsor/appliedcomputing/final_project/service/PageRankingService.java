@@ -1,6 +1,7 @@
 package ca.uwindsor.appliedcomputing.final_project.service;
 
-import ca.uwindsor.appliedcomputing.final_project.data_structure.AVLTree;
+import ca.uwindsor.appliedcomputing.final_project.data_structure.AVLTreeWordFrequency;
+import ca.uwindsor.appliedcomputing.final_project.dto.PageRankingData;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvValidationException;
 import org.springframework.stereotype.Service;
@@ -15,8 +16,8 @@ import java.util.*;
 @Service
 public class PageRankingService {
 
-    // Map to store product links and their associated AVLTree of keyword frequencies
-    private Map<String, AVLTree> productKeywordFrequencies = new HashMap<>();
+    // Map to store product links and their associated AVLTreeWordFrequency of keyword frequencies
+    private Map<String, AVLTreeWordFrequency<String>> productKeywordFrequencies = new HashMap<>();
 
     // Max-heap (PriorityQueue) to store products ranked by their calculated ranks
     private PriorityQueue<Map.Entry<String, Integer>> maxHeap = new PriorityQueue<>(
@@ -37,7 +38,7 @@ public class PageRankingService {
     /**
      * Parses the CSV dataset to build keyword frequency AVL trees for each product.
      * Each product's name and description are processed to extract keywords.
-     * Keywords are inserted into an AVLTree and stored in productKeywordFrequencies.
+     * Keywords are inserted into an AVLTreeWordFrequency and stored in productKeywordFrequencies.
      */
     private void parseCSV() {
         try (CSVReader reader = new CSVReader(new FileReader(csvFilePath))) {
@@ -51,7 +52,7 @@ public class PageRankingService {
 
                 // Split combined product name and description into individual keywords
                 String[] keywords = (productName + " " + productDescription).split("\\s+");
-                AVLTree keywordTree = new AVLTree();
+                AVLTreeWordFrequency<String> keywordTree = new AVLTreeWordFrequency<>();
 
                 // Insert each keyword into the AVL tree for the current product
                 for (String keyword : keywords) {
@@ -70,16 +71,16 @@ public class PageRankingService {
 
     /**
      * Calculates page ranks for products based on the provided search keywords.
-     * Ranks are determined by the frequency of each keyword in the product's AVLTree.
+     * Ranks are determined by the frequency of each keyword in the product's AVLTreeWordFrequency.
      * Returns a list of product links sorted by their ranks in descending order.
      *
      * @param searchKeywords Array of keywords to search for and rank products
      * @return List of product links sorted by rank
      */
-    public List<String> calculatePageRanks(String[] searchKeywords) {
+    public List<PageRankingData> calculatePageRanks(String[] searchKeywords, int limit) {
         // Iterate through each product in productKeywordFrequencies
         for (String productLink : productKeywordFrequencies.keySet()) {
-            AVLTree keywordTree = productKeywordFrequencies.get(productLink);
+            AVLTreeWordFrequency<String> keywordTree = productKeywordFrequencies.get(productLink);
             int rank = 0;
 
             // Calculate rank for the current product based on search keywords
@@ -95,11 +96,14 @@ public class PageRankingService {
         }
 
         // Retrieve top-ranked product links from maxHeap
-        List<String> topRankedProducts = new ArrayList<>();
+        List<PageRankingData> topRankedProducts = new ArrayList<>();
         int count = 0;
-        while (!maxHeap.isEmpty() && count < 10) {
+        while (!maxHeap.isEmpty() && count < limit) {
             Map.Entry<String, Integer> entry = maxHeap.poll();
-            topRankedProducts.add(entry.getKey());
+            PageRankingData rankingData = new PageRankingData();
+            rankingData.setUrl(entry.getKey());
+            rankingData.setFrequencyOfSearchKeyword(entry.getValue());
+            topRankedProducts.add(rankingData);
             count++;
         }
 
