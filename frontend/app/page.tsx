@@ -1,5 +1,5 @@
 'use client'
-import { Input, Layout } from 'antd'
+import { Input, Layout, Pagination, PaginationProps } from 'antd'
 import { Content } from 'antd/lib/layout/layout'
 import AppHeader from './components/AppHeader'
 import AppFooter from './components/AppFooter'
@@ -13,12 +13,22 @@ export default function Home() {
     const [items, setItems] = useState<FoodItemType[]>([])
     const [loading, setLoading] = useState(true)
     const [searchValue, setSearchValue] = useState('')
+    const [page, setPage] = useState(0)
+    const [limit, setLimit] = useState(10)
+    const [total, setTotal] = useState(0)
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get('/api/product')
-                setItems(response.data)
+                const response = await axios.get('/api/product', {
+                    params: {
+                        keyword: searchValue,
+                        page,
+                        limit,
+                    },
+                })
+                setItems(response.data.data)
+                setTotal(response.data.total)
             } catch (error) {
                 console.error('Fetch error:', error)
             } finally {
@@ -27,7 +37,15 @@ export default function Home() {
         }
 
         fetchData()
-    }, [])
+    }, [searchValue, page, limit])
+
+    const onPaginationChange: PaginationProps['onShowSizeChange'] = (
+        current,
+        pageSize
+    ) => {
+        setPage(current)
+        setLimit(pageSize)
+    }
 
     return (
         <Layout>
@@ -46,6 +64,12 @@ export default function Home() {
                         setSearchValue={setSearchValue}
                     />
                     <FoodItem items={items} />
+                    <Pagination
+                        showSizeChanger
+                        onChange={onPaginationChange}
+                        defaultCurrent={page}
+                        total={total}
+                    />
                 </div>
             </Content>
             <AppFooter />

@@ -2,12 +2,14 @@ import { FoodItemType } from '@/app/types/food'
 import Image from 'next/image'
 import React from 'react'
 import { Card, Row, Col } from 'antd'
-import Meta from 'antd/es/card/Meta'
 
 const { Meta: CardMeta } = Card
 
 // Utility function to truncate text
 const truncateText = (text: string, maxLength: number) => {
+    if (!text) {
+        return ''
+    }
     if (text.length <= maxLength) {
         return text
     }

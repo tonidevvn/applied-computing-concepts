@@ -132,7 +132,6 @@ public class WordCompletionService {
             System.out.println("No suggestions found.");
             return Collections.emptyList();
         }
-        System.out.println("Top suggestions:");
         List<WordFrequency> topSuggestions = new ArrayList<>();
         while (!pq.isEmpty()) {
             topSuggestions.add(pq.poll());

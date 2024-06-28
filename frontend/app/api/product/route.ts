@@ -1,10 +1,11 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { FoodItemType } from '@/app/types/food';
 import axios from 'axios';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const { searchParams } = new URL(request.url);
   try {
-    const response = await axios.get('http://localhost:8080/api/products');
+    const response = await axios.get('http://localhost:8080/api/products', { params: searchParams });
     const data: FoodItemType[] = response.data;
     return NextResponse.json(data);
   } catch (error) {

@@ -8,5 +8,5 @@ import java.util.Set;
 public interface KeywordService {
     Set<KeywordSearchData> setKeywordSearched(String keyword);
     Set<KeywordSearchData> getRecentKeywordsSearched();
-    Set<KeywordSearchData> getTopKeywordsSearched();
+    Set<KeywordSearchData> getTopKeywordsSearched(int limit);
 }

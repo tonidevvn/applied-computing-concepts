@@ -27,6 +27,6 @@ public class WebCrawlerController {
      */
     @GetMapping
     public WebCrawlerData getContentsFromWebUrl(@RequestParam("url") String url) {
-        return WebCrawlerService.crawlWebUrl(url);
+        return webCrawlerService.crawlWebUrl(url);
     }
 }
