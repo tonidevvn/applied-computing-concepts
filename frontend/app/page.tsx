@@ -1,5 +1,5 @@
 'use client'
-import { Input, Layout, Pagination, PaginationProps } from 'antd'
+import { Flex, Input, Layout, Pagination, PaginationProps } from 'antd'
 import { Content } from 'antd/lib/layout/layout'
 import AppHeader from './components/AppHeader'
 import AppFooter from './components/AppFooter'
@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { FoodItemType } from './types/food'
 import AppAutoComplete from './components/AppAutoComplete'
+import AppSpellChecking from './components/AppSpellChecking'
 
 export default function Home() {
     const [items, setItems] = useState<FoodItemType[]>([])
@@ -59,17 +60,28 @@ export default function Home() {
                         borderRadius: '20px',
                     }}
                 >
-                    <AppAutoComplete
-                        searchValue={searchValue}
-                        setSearchValue={setSearchValue}
-                    />
-                    <FoodItem items={items} />
-                    <Pagination
-                        showSizeChanger
-                        onChange={onPaginationChange}
-                        defaultCurrent={page}
-                        total={total}
-                    />
+                    <Flex gap={'middle'} align='center'>
+                        <Flex vertical={true}>
+                            <AppAutoComplete
+                                searchValue={searchValue}
+                                setSearchValue={setSearchValue}
+                            />
+                            <AppSpellChecking
+                                searchValue={searchValue}
+                                setSearchValue={setSearchValue}
+                            />
+                        </Flex>
+                        <Flex gap='middle' vertical={true}>
+                            <FoodItem items={items} />
+                            <Pagination
+                                style={{ marginLeft: 'auto' }}
+                                showSizeChanger
+                                onChange={onPaginationChange}
+                                defaultCurrent={page}
+                                total={total}
+                            />
+                        </Flex>
+                    </Flex>
                 </div>
             </Content>
             <AppFooter />

@@ -3,11 +3,10 @@ import axios from 'axios';
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  const prefix = searchParams.get('prefix') || ''; // Extract query parameter
 
   try {
     const response = await axios.get(`http://localhost:8080/api/auto-complete`, {
-      params: { prefix }
+      params: searchParams
     });
     const data: string[] = response.data;
     return NextResponse.json(data);

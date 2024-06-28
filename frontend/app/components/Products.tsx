@@ -18,7 +18,7 @@ const truncateText = (text: string, maxLength: number) => {
 
 function FoodItem({ items }: { items: FoodItemType[] }) {
     return (
-        <Row gutter={[16, 16]} justify='center'>
+        <Row gutter={[4, 4]} justify='center'>
             {items.map((item, index) => (
                 <Col key={index} xs={24} sm={12} md={8} lg={6} xl={4}>
                     <Card

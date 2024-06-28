@@ -16,9 +16,9 @@ export default function AppAutoComplete({
     useEffect(() => {
         const fetchAutoCompleteData = async () => {
             try {
-                const response = await axios.get(
-                    '/api/auto-complete?prefix=' + searchValue
-                )
+                const response = await axios.get('/api/auto-complete', {
+                    params: { prefix: searchValue },
+                })
                 setAutoCompleteOptions(
                     response.data.map((item: string) => ({ value: item }))
                 )
@@ -34,6 +34,8 @@ export default function AppAutoComplete({
             onSearch={(value) => setSearchValue(value)}
             style={{ marginBottom: 24, width: '200px' }}
             options={autoCompleteOptions}
+            value={searchValue}
+            onSelect={(value) => setSearchValue(value)}
             showSearch
         />
     )
