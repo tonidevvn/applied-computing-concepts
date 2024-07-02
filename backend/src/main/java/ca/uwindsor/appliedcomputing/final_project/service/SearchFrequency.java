@@ -102,7 +102,7 @@ public class SearchFrequency {
      * Populates the keywordToUrlsMap with keywords and the URLs where they appear.
      */
     public static void readKeywordsFromCsv() {
-        try (CSVReader csvReader = new CSVReader(new FileReader(CSV_FILE_PATH + "products_zehrs.csv"))) {
+        try (CSVReader csvReader = new CSVReader(new FileReader(CSV_FILE_PATH + "zehrs.csv"))) {
             csvReader.readNext(); // Skip the header
             List<String[]> rows = csvReader.readAll();
             Map<String, Integer> keywords = new HashMap<>();
