@@ -1,12 +1,22 @@
 package ca.uwindsor.appliedcomputing.final_project.service;
 
-
 import ca.uwindsor.appliedcomputing.final_project.dto.KeywordSearchData;
+import org.springframework.stereotype.Service;
 
-import java.util.Set;
+import java.util.List;
 
-public interface KeywordService {
-    Set<KeywordSearchData> setKeywordSearched(String keyword);
-    Set<KeywordSearchData> getRecentKeywordsSearched();
-    Set<KeywordSearchData> getTopKeywordsSearched(int limit);
+@Service
+public class KeywordService {
+
+    public List<KeywordSearchData> setKeywordSearched(String keyword) {
+        return SearchFrequency.performSearchQueries(keyword);
+    }
+
+    public List<KeywordSearchData> getRecentKeywordsSearched() {
+        return SearchFrequency.topRecentSearchQueries();
+    }
+
+    public List<KeywordSearchData> getTopKeywordsSearched(int limit) {
+        return SearchFrequency.topSearchQueries(limit);
+    }
 }

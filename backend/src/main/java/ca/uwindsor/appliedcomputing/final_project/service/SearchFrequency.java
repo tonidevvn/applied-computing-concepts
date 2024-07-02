@@ -3,6 +3,7 @@ package ca.uwindsor.appliedcomputing.final_project.service;
 import ca.uwindsor.appliedcomputing.final_project.data_structure.AVLTreeWordFrequency;
 import ca.uwindsor.appliedcomputing.final_project.data_structure.AVLTreeWordFrequency.AvlNode;
 import ca.uwindsor.appliedcomputing.final_project.dto.KeywordSearchData;
+import ca.uwindsor.appliedcomputing.final_project.util.Sorting;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
 
@@ -197,8 +198,8 @@ public class SearchFrequency {
      *
      * @return Set of Keyword Data
      */
-    public static Set<KeywordSearchData> performSearchQueries(String query) {
-        Set<KeywordSearchData> set = new HashSet<>();
+    public static List<KeywordSearchData> performSearchQueries(String query) {
+        List<KeywordSearchData> set = new ArrayList<>();
         String now = LocalDateTime.now().toString();
         // Trim the search query before processing
         query = query.trim();
@@ -223,8 +224,8 @@ public class SearchFrequency {
      *
      * @return a set of KeywordData representing the top search queries and their frequencies
      */
-    public static Set<KeywordSearchData> topSearchQueries(int limit) {
-        Set<KeywordSearchData> response = new HashSet<>();
+    public static List<KeywordSearchData> topSearchQueries(int limit) {
+        List<KeywordSearchData> response = new ArrayList<>();
         PriorityQueue<AvlNode<String>> maxHeap = new PriorityQueue<>((x, y) -> y.getFrequency() - x.getFrequency());
         searchFrequencyTree.inOrderTraversal(maxHeap);
 
@@ -246,8 +247,8 @@ public class SearchFrequency {
      *
      * @return a set of KeywordData representing the top recent search queries and their frequencies, in the same order as the input list
      */
-    public static Set<KeywordSearchData> topRecentSearchQueries() {
-        Set<KeywordSearchData> response = new LinkedHashSet<>();
+    public static List<KeywordSearchData> topRecentSearchQueries() {
+        List<KeywordSearchData> response = new LinkedList<>();
         for (String recentSearchQuery : recentSearchQueries) {
             KeywordSearchData kwData = new KeywordSearchData();
             String[] kwt = recentSearchQuery.split(",");

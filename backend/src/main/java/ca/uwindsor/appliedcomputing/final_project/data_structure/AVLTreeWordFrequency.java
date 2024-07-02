@@ -4,9 +4,7 @@ import ca.uwindsor.appliedcomputing.final_project.dto.KeywordSearchData;
 import lombok.Data;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.PriorityQueue;
-import java.util.Set;
+import java.util.*;
 
 public class AVLTreeWordFrequency<T extends Comparable<? super T>> {
 
@@ -278,8 +276,8 @@ public class AVLTreeWordFrequency<T extends Comparable<? super T>> {
      *
      * @param k the number of top frequent keywords to print
      */
-    public Set<KeywordSearchData> getTopK(int k) {
-        Set<KeywordSearchData> response = new HashSet<>();
+    public List<KeywordSearchData> getTopK(int k) {
+        List<KeywordSearchData> response = new ArrayList<>();
         PriorityQueue<AvlNode<T>> maxHeap = new PriorityQueue<>((x, y) -> y.frequency - x.frequency);
         inOrderTraversal(root, maxHeap);
 
