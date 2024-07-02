@@ -21,12 +21,6 @@ public class ScraperController {
     @Autowired
     private KeywordService keywordService;
 
-    @GetMapping(path = "/word-complete")
-    public Set<String> getWordCompleteList(@RequestParam("q") String text) throws Exception {
-        // TODO
-        return Set.of();
-    }
-
     @GetMapping(path = "/word-count")
     public int getWordCount(@RequestParam("q") String url) throws Exception {
         // TODO
