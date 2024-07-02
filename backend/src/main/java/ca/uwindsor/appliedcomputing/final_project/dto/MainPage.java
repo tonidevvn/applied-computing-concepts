@@ -100,6 +100,19 @@ public class MainPage {
     public List<WebElement> searchProducts;
 
     /**
+     * Web element product description
+     */
+    @FindBy(css = "div.product-description-text__text")
+    public WebElement productDescription;
+
+
+    /**
+     * Web element product Disclaimer
+     */
+    @FindBy(css = "div.product-details-page-legal-disclaimer__title__label")
+    public WebElement productDisclaimer;
+
+    /**
      * Web element for the footer 'Weekly Flyer' link identified by its data-track-link-name attribute
      */
     @FindBy(css = "a[data-track-link-name=\"popular-categories:weekly-flyer\"]")

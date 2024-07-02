@@ -103,6 +103,11 @@ public class WebDriverHelper {
         waitInSeconds(5);
     }
 
+    public static void loadUrlAndWait(String url) {
+        driver.get(url);
+        waitForJStoLoad();
+    }
+
     /**
      * Waits until the specified web element is present and visible on the page.
      *
@@ -215,7 +220,7 @@ public class WebDriverHelper {
      */
     public static String crawlWebUrl(String url) {
         // Fetch the page
-        driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+        driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
         driver.get(url);
         waitForJStoLoad();
         return driver.findElement(By.tagName("body")).getText().replaceAll("\n", " ");
