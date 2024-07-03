@@ -8,7 +8,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(path = "/api/keyword-search")
-public class KeywordController {
+public class SearchController {
     @Autowired
     private KeywordService keywordService;
 

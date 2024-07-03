@@ -3,10 +3,13 @@
 import { FoodItemType } from '@/app/types/food'
 import Image from 'next/image'
 import React, {useEffect, useState} from 'react'
-import {Card, Row, Col, PaginationProps, Flex, Pagination} from 'antd'
+import {Card, Row, Col, PaginationProps, Flex, Pagination, Button} from 'antd'
 import axios from "axios";
 import AppAutoComplete from "@/app/components/AppAutoComplete";
 import AppSpellChecking from "@/app/components/AppSpellChecking";
+import AppSearchHistory from "@/app/components/AppSearchHistory";
+import {SearchOutlined} from "@ant-design/icons";
+import ProductSearch from "@/app/components/ProductSearch";
 
 const { Meta: CardMeta } = Card
 
@@ -109,16 +112,9 @@ export default function Products() {
 
     return (
         <Flex gap={'middle'} align='center' vertical={true}>
-            <Flex vertical={true}>
-                <AppAutoComplete
-                    searchValue={searchValue}
-                    setSearchValue={setSearchValue}
-                />
-                <AppSpellChecking
-                    searchValue={searchValue}
-                    setSearchValue={setSearchValue}
-                />
-            </Flex>
+            <ProductSearch
+                searchValue={searchValue}
+                setSearchValue={setSearchValue} />
             <Flex gap='middle' vertical={true}>
                 <FoodItem items={items} />
                 <Pagination

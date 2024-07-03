@@ -1,4 +1,4 @@
-import { AutoComplete, Button, Card } from 'antd'
+import { Button, Card } from 'antd'
 import axios from 'axios'
 import { useEffect, useState } from 'react'
 
