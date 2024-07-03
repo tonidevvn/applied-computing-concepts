@@ -1,7 +1,12 @@
+'use client'
+
 import { FoodItemType } from '@/app/types/food'
 import Image from 'next/image'
-import React from 'react'
-import { Card, Row, Col } from 'antd'
+import React, {useEffect, useState} from 'react'
+import {Card, Row, Col, PaginationProps, Flex, Pagination} from 'antd'
+import axios from "axios";
+import AppAutoComplete from "@/app/components/AppAutoComplete";
+import AppSpellChecking from "@/app/components/AppSpellChecking";
 
 const { Meta: CardMeta } = Card
 
@@ -19,7 +24,7 @@ const truncateText = (text: string, maxLength: number) => {
 function FoodItem({ items }: { items: FoodItemType[] }) {
     return (
         <Row gutter={[4, 4]} justify='center'>
-            {items.map((item, index) => (
+            {!!items && items.map((item, index) => (
                 <Col key={index} xs={24} sm={12} md={8} lg={6} xl={4}>
                     <Card
                         hoverable
@@ -52,7 +57,7 @@ function FoodItem({ items }: { items: FoodItemType[] }) {
                                     fontSize: '1.2em',
                                 }}
                             >
-                                ${item.price}
+                                {item.price}
                             </p>
                         </div>
                     </Card>
@@ -62,4 +67,68 @@ function FoodItem({ items }: { items: FoodItemType[] }) {
     )
 }
 
-export default FoodItem
+export default function Products() {
+
+    const [items, setItems] = useState<FoodItemType[]>([])
+    const [loading, setLoading] = useState(true)
+    const [searchValue, setSearchValue] = useState('')
+    const [page, setPage] = useState(0)
+    const [limit, setLimit] = useState(10)
+    const [total, setTotal] = useState(0)
+
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await axios.get('/api/product', {
+                    params: {
+                        keyword: searchValue,
+                        page,
+                        limit,
+                    },
+                })
+                setItems(response.data)
+                setTotal(response.data.length)
+            } catch (error) {
+                console.error('Fetch error:', error)
+            } finally {
+                setLoading(false)
+            }
+        }
+
+        fetchData()
+    }, [searchValue, page, limit])
+
+    const onPaginationChange: PaginationProps['onShowSizeChange'] = (
+        current,
+        pageSize
+    ) => {
+        setPage(current)
+        setLimit(pageSize)
+    }
+
+    return (
+        <Flex gap={'middle'} align='center' vertical={true}>
+            <Flex vertical={true}>
+                <AppAutoComplete
+                    searchValue={searchValue}
+                    setSearchValue={setSearchValue}
+                />
+                <AppSpellChecking
+                    searchValue={searchValue}
+                    setSearchValue={setSearchValue}
+                />
+            </Flex>
+            <Flex gap='middle' vertical={true}>
+                <FoodItem items={items} />
+                <Pagination
+                    style={{ marginLeft: 'auto' }}
+                    showSizeChanger
+                    onChange={onPaginationChange}
+                    defaultCurrent={page}
+                    total={total}
+                />
+            </Flex>
+        </Flex>
+    )
+}

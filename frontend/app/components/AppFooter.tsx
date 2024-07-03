@@ -4,7 +4,7 @@ export default function AppFooter() {
     return (
         <Footer style={{ textAlign: 'center' }}>
             Applied Computing Concepts ©{new Date().getFullYear()} Created by
-            Team 1
+            AlgorithmAvengers Team
         </Footer>
     )
 }
