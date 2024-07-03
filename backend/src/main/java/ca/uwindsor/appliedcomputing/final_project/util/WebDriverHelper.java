@@ -154,6 +154,7 @@ public class WebDriverHelper {
      */
     private static boolean waitForJStoLoad() {
         Wait<WebDriver> wait = new WebDriverWait(driver, Duration.ofSeconds(30));
+        wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector(".dummy-element")));
 
         // wait for jQuery to load
         ExpectedCondition<Boolean> jQueryLoad = new ExpectedCondition<Boolean>() {
@@ -222,8 +223,10 @@ public class WebDriverHelper {
         // Fetch the page
         driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
         driver.get(url);
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+        js.executeScript("window.scrollBy(0,350)", "");
         waitForJStoLoad();
-        return driver.findElement(By.tagName("body")).getText().replaceAll("\n", " ");
+       return driver.findElement(By.tagName("body")).getText().replaceAll("\n", " ");
     }
 
     /**

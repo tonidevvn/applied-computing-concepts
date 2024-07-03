@@ -6,6 +6,7 @@ import ca.uwindsor.appliedcomputing.final_project.dto.KeywordSearchData;
 import ca.uwindsor.appliedcomputing.final_project.util.Sorting;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
+import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -18,7 +19,8 @@ import java.util.*;
  * - Handling user search queries to find matching websites and display the top results.
  * - Tracking and displaying the top 10 recent and most frequent search queries.
  */
-public class SearchFrequency {
+@Service
+public class SearchFrequencyService {
 
     /**
      * The path to the directory containing the CSV files.
@@ -84,13 +86,14 @@ public class SearchFrequency {
         Map<String, Integer> keywordFrequencies = new HashMap<>();
         for (String str : strings) {
             if (!str.startsWith("$") && !str.startsWith("http")) {
-                List<String> stringList = Arrays.stream(str.split(" "))
+                List<String> stringList = Arrays.stream(str.split("\\s+"))
                         //.flatMap(word -> Arrays.stream(word.split("-")))
                         .map(word -> word.replaceAll("[^a-zA-Z0-9'-]", ""))
                         .filter(word -> !word.isEmpty())
                         .toList();
                 for (String key : stringList) {
-                    keywordFrequencies.put(key, keywordFrequencies.getOrDefault(key, 0) + 1);
+                    String lowerKey = key.toLowerCase();
+                    keywordFrequencies.put(lowerKey, keywordFrequencies.getOrDefault(lowerKey, 0) + 1);
                 }
             }
         }
@@ -129,7 +132,7 @@ public class SearchFrequency {
      * @param query the search query
      */
     private static void displayMatchingWebsites(String query) {
-        Map<String, Integer> urls = SearchFrequency.keywordToUrlsMap.getOrDefault(query.toLowerCase(), Collections.emptyMap());
+        Map<String, Integer> urls = SearchFrequencyService.keywordToUrlsMap.getOrDefault(query.toLowerCase(), Collections.emptyMap());
         List<Map.Entry<String, Integer>> sortedUrls = new ArrayList<>(urls.entrySet());
         Sorting.heapSort(sortedUrls);
         int searchResultSizeDisplay = Math.min(MAX_DISPLAY_QUERIES, sortedUrls.size());

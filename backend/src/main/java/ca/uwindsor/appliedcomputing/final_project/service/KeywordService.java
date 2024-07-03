@@ -9,14 +9,14 @@ import java.util.List;
 public class KeywordService {
 
     public List<KeywordSearchData> setKeywordSearched(String keyword) {
-        return SearchFrequency.performSearchQueries(keyword);
+        return SearchFrequencyService.performSearchQueries(keyword);
     }
 
     public List<KeywordSearchData> getRecentKeywordsSearched() {
-        return SearchFrequency.topRecentSearchQueries();
+        return SearchFrequencyService.topRecentSearchQueries();
     }
 
     public List<KeywordSearchData> getTopKeywordsSearched(int limit) {
-        return SearchFrequency.topSearchQueries(limit);
+        return SearchFrequencyService.topSearchQueries(limit);
     }
 }
