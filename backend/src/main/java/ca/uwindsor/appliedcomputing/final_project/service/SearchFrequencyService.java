@@ -42,9 +42,6 @@ public class SearchFrequencyService {
 
     private static final LinkedList<String> recentSearchQueries = new LinkedList<>();
 
-    private static final Map<String, Integer> searchQueriesCounter = new HashMap<>();
-
-
     public static void initKwService() {
         // Load keywords from CSV file(s) (data.csv)
         readKeywordsFromCsv();
@@ -162,30 +159,6 @@ public class SearchFrequencyService {
     }
 
     /**
-     * Maintain the list of recent search queries.
-     * Ensures the list does not exceed MAX_DISPLAY_QUERIES in size.
-     *
-     * @param query               the new search query to add
-     */
-    private static void updateSearchQueriesCounter(String query) {
-        query = query.trim();
-        if (searchQueriesCounter.containsKey(query)) {
-            searchQueriesCounter.put(query, searchQueriesCounter.get(query) + 1);
-        } else {
-            searchQueriesCounter.put(query, 1);
-        }
-    }
-
-    /**
-     * Returns the frequency of the search query
-     *
-     * @param query               the new search query to check
-     */
-    private static int getSearchQueriesFrequency(String query) {
-        return searchQueriesCounter.getOrDefault(query, 1);
-    }
-
-    /**
      * Prints top 10 of recent search queries.
      */
     private static void printRecentSearchQueries() {
@@ -210,12 +183,10 @@ public class SearchFrequencyService {
         searchFrequencyTree.insert(query);
         // Update recent search queries list
         updateRecentSearchQueries(query + "," + now);
-        // Update search queries counter
-        updateSearchQueriesCounter(query);
 
         KeywordSearchData kwData = new KeywordSearchData();
         kwData.setKeyword(query);
-        kwData.setCount(getSearchQueriesFrequency(query));
+        kwData.setCount(searchFrequencyTree.findFrequency(query));
         kwData.setSearchTime(now);
         set.add(kwData);
         return set;
@@ -228,7 +199,7 @@ public class SearchFrequencyService {
      * @return a set of KeywordData representing the top search queries and their frequencies
      */
     public static List<KeywordSearchData> topSearchQueries(int limit) {
-        List<KeywordSearchData> response = new ArrayList<>();
+        List<KeywordSearchData> kwsData = new ArrayList<>();
         PriorityQueue<AvlNode<String>> maxHeap = new PriorityQueue<>((x, y) -> y.getFrequency() - x.getFrequency());
         searchFrequencyTree.inOrderTraversal(maxHeap);
 
@@ -238,9 +209,9 @@ public class SearchFrequencyService {
             kwData.setKeyword(node.getElement());
             kwData.setCount(node.getFrequency());
             kwData.setSearchTime(LocalDateTime.now().toString());
-            response.add(kwData);
+            kwsData.add(kwData);
         }
-        return searchFrequencyTree.getTopK(MAX_DISPLAY_QUERIES);
+        return kwsData;
     }
 
     /**
