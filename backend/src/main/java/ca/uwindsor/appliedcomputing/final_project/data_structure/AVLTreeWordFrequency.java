@@ -272,28 +272,6 @@ public class AVLTreeWordFrequency<T extends Comparable<? super T>> {
     }
 
     /**
-     * Prints the top K most frequent keywords in the AVL tree.
-     *
-     * @param k the number of top frequent keywords to print
-     */
-    public List<KeywordSearchData> getTopK(int k) {
-        List<KeywordSearchData> response = new ArrayList<>();
-        PriorityQueue<AvlNode<T>> maxHeap = new PriorityQueue<>((x, y) -> y.frequency - x.frequency);
-        inOrderTraversal(root, maxHeap);
-
-        for (int j = 0; j < k && !maxHeap.isEmpty(); j++) {
-            AvlNode<T> node = maxHeap.poll();
-            KeywordSearchData kwData = new KeywordSearchData();
-            kwData.setKeyword(node.element.toString());
-            kwData.setCount(node.frequency);
-            kwData.setSearchTime(LocalDateTime.now().toString());
-            response.add(kwData);
-        }
-        return response;
-    }
-
-
-    /**
      * Represents a node in the AVL tree.
      * @param <T> the type of element held in this node.
      */
