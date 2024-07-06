@@ -1,7 +1,8 @@
 'use client'
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Link from "next/link";
 import { FaBars, FaTimes } from "react-icons/fa";
+import {Popover} from "antd";
 
 export default function Navbar() {
     const [nav, setNav] = useState(false)
@@ -13,8 +14,15 @@ export default function Navbar() {
         },
         {
             id: 2,
-            link: "about",
-            title: "About",
+            link: "tools",
+            title: "Tools",
+            submenus: [
+                {
+                    id: 11,
+                    link: "spell-checking",
+                    title: "Spell Checking",
+                }
+            ]
         },
         {
             id: 3,
@@ -27,16 +35,49 @@ export default function Navbar() {
             title: "Contact",
         },
     ];
+    // Function to hide nav on resize
+    const handleResize = () => {
+        if (window.innerWidth >= 768) { // Assuming 768px is your md breakpoint
+            setNav(false);
+        }
+    };
+
+    // Set up event listener for window resize
+    useEffect(() => {
+        window.addEventListener('resize', handleResize);
+
+        // Clean up the event listener
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
+
+    function loadSubmenus(submenus: { id: number, link: string, title: string }[]) {
+        return (
+            <div>
+                {submenus.map(({id, link, title}) => (
+                    <Link href={link}>{title}</Link>
+                    ))}
+            </div>
+        )
+    ;
+}
 
     return (
         <>
             <ul className="hidden md:flex">
-                {links.map(({ id, link, title }) => (
+                {links.map(({ id, link, title, submenus }) => (
                     <li
                         key={id}
-                        className="nav-links px-4 cursor-pointer capitalize text-xl text-gray-500 hover:scale-105 hover:text-white duration-200 link-underline"
+                        className="nav-links px-4 cursor-pointer capitalize text-xl text-gray-500 hover:text-white duration-200 link-underline"
                     >
-                        <Link href={link}>{title}</Link>
+                        { !!submenus ? (
+                            <Popover placement="bottom" content={loadSubmenus(submenus)}>
+                        <Link href='#'>{title}</Link>
+                            </Popover>
+                        ): (
+                            <Link href={link}>{title}</Link>
+                        )}
                     </li>
                 ))}
             </ul>

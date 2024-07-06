@@ -1,6 +1,7 @@
 import { AutoComplete } from 'antd'
 import axios from 'axios'
 import { useEffect, useState } from 'react'
+import { useDebounce } from 'use-debounce'
 
 export default function AppAutoComplete({
     searchValue,
@@ -12,6 +13,7 @@ export default function AppAutoComplete({
     const [autoCompleteOptions, setAutoCompleteOptions] = useState<
         { value: string }[]
     >([])
+    const [debounced ] = useDebounce(searchValue, 1000);
 
     useEffect(() => {
         const fetchAutoCompleteData = async () => {
@@ -27,7 +29,7 @@ export default function AppAutoComplete({
             }
         }
         fetchAutoCompleteData()
-    }, [searchValue])
+    }, [debounced])
     return (
         <AutoComplete
             placeholder='Search food items'
