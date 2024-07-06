@@ -70,6 +70,16 @@ public class ProductService {
         return fetchProductList(limit);
     }
 
+    public List<ProductData> getProducts(int limit, String query) {
+        // re-update limit number
+        if (limit == -1)
+            limit = 100;
+        else if (limit <= 0)
+            limit = 10;
+
+        //List<ProductData> responseProducts = loadProductsFromCSV(limit);
+        return fetchProductList(limit, query);
+    }
 
     // Save operation
     ProductData saveProduct(ProductData product) {
@@ -84,14 +94,17 @@ public class ProductService {
 
     // Read operation
     public List<ProductData> fetchProductList(int limit) {
-        int count = 0;
-        List<ProductData> productList = new ArrayList<>();
-        for (ProductData productData : fetchProductList()) {
-            if (count++ < limit) {
-                productList.add(productData);
-            }
+        return (List<ProductData>)
+                productRepository.fetchProductList(limit);
+    }
+
+    // Read operation
+    public List<ProductData> fetchProductList(int limit, String query) {
+        if (!query.trim().isEmpty()) {
+            return (List<ProductData>)
+                    productRepository.findByKeywordWithLimit(query, limit);
         }
-        return productList;
+        return fetchProductList(limit);
     }
 
     public List<ProductData> loadProductsFromCSV(int limit) {

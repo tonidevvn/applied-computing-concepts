@@ -29,10 +29,6 @@ export default function ProductSearch({
                         Search
                     </Button>
                 </Flex>
-                <AppSpellChecking
-                    searchValue={searchValue}
-                    setSearchValue={setSearchValue}
-                />
                 <AppSearchHistory
                     queryValue={queryValue}  />
             </Flex>

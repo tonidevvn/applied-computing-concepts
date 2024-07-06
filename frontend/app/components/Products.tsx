@@ -5,11 +5,8 @@ import Image from 'next/image'
 import React, {useEffect, useState} from 'react'
 import {Card, Row, Col, PaginationProps, Flex, Pagination, Button} from 'antd'
 import axios from "axios";
-import AppAutoComplete from "@/app/components/AppAutoComplete";
-import AppSpellChecking from "@/app/components/AppSpellChecking";
-import AppSearchHistory from "@/app/components/AppSearchHistory";
-import {SearchOutlined} from "@ant-design/icons";
 import ProductSearch from "@/app/components/ProductSearch";
+import {useDebounce} from "use-debounce";
 
 const { Meta: CardMeta } = Card
 
@@ -79,13 +76,14 @@ export default function Products() {
     const [limit, setLimit] = useState(10)
     const [total, setTotal] = useState(0)
 
+    const [debounced ] = useDebounce(searchValue, 1000);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const response = await axios.get('/api/product', {
                     params: {
-                        keyword: searchValue,
+                        q: searchValue,
                         page,
                         limit,
                     },
@@ -100,7 +98,7 @@ export default function Products() {
         }
 
         fetchData()
-    }, [searchValue, page, limit])
+    }, [debounced, page, limit])
 
     const onPaginationChange: PaginationProps['onShowSizeChange'] = (
         current,

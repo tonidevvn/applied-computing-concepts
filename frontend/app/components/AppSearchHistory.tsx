@@ -1,13 +1,24 @@
-import {Badge, Button, Card, Space} from 'antd'
+import {Badge, Button, Card, Drawer, FloatButton, List, Space, Typography} from 'antd'
 import axios from 'axios'
 import { useEffect, useState } from 'react'
 import {SearchDataType} from "@/app/types/searchdata";
+import {QuestionCircleOutlined} from "@ant-design/icons";
 
 export default function AppSearchHistory({
                                              queryValue
                                          }: {
     queryValue: string
 }) {
+    const [open, setOpen] = useState(false);
+
+    const showDrawer = () => {
+        setOpen(true);
+    };
+
+    const onClose = () => {
+        setOpen(false);
+    };
+
     const [topSearches, setTopSearches] = useState<SearchDataType[]>([])
     const [recentSearches, setRecentSearches] = useState<SearchDataType[]>([])
 
@@ -37,29 +48,36 @@ export default function AppSearchHistory({
     }, [queryValue])
     return (
         <>
-        {!!topSearches && topSearches.length > 0 && (<Card title='Top Search'>
-                <Space size="middle">
-                {topSearches.map((keywordData: SearchDataType, i:number) => (
-                        <Badge key={i} count={keywordData.count}>
-                            <Button>
-                                {keywordData.keyword}
-                            </Button>
-                        </Badge>
-                ))}
-                </Space>
-            </Card>
-        )}
+            <FloatButton icon={<QuestionCircleOutlined />} type="primary" style={{ right: 24 }} onClick={showDrawer} />
+            <Drawer title="Search History" onClose={onClose} open={open}>
+                {!!topSearches && topSearches.length > 0 && (<Card title='Top Search'>
+                        <Space size={'middle'} wrap>
+                        {topSearches.map((keywordData: SearchDataType, i: number) => (
+                            <Badge key={i} count={keywordData.count}>
+                                <Button>
+                                    {keywordData.keyword}
+                                </Button>
+                            </Badge>
+                        ))}
+                        </Space>
+                </Card>
+                    )}
 
-        {!!recentSearches && recentSearches.length > 0 && (<Card title='Search History'>
-            <Space size="middle">
-            {recentSearches.map((keywordData: SearchDataType, i:number) => (
-                    <Button key={i} >
-                        {keywordData.keyword}
-                    </Button>
-            ))}
-            </Space>
-            </Card>
-        )}
+                {!!recentSearches && recentSearches.length > 0 && (<Card title='Search History'>
+                        <Space size="middle">
+                            <List
+                                className="min-w-[120px]"
+                                dataSource={recentSearches}
+                                renderItem={(keywordData, index) => (
+                                    <List.Item>
+                                        [#{index}] <Typography.Text mark>{keywordData.keyword}</Typography.Text>
+                                    </List.Item>
+                                )}
+                            />
+                        </Space>
+                    </Card>
+                )}
+            </Drawer>
         </>
     )
 }
