@@ -1,4 +1,4 @@
-CREATE TABLE product_data (
+CREATE TABLE ProductData (
  id bigint not null AUTO_INCREMENT,
  name varchar(256) not null,
  price varchar(256),
