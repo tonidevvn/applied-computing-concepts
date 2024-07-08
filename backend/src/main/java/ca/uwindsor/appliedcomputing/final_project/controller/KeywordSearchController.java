@@ -1,30 +1,31 @@
 package ca.uwindsor.appliedcomputing.final_project.controller;
-
 import ca.uwindsor.appliedcomputing.final_project.dto.KeywordSearchData;
 import ca.uwindsor.appliedcomputing.final_project.dto.WebCrawlerData;
 import ca.uwindsor.appliedcomputing.final_project.service.KeywordService;
 import ca.uwindsor.appliedcomputing.final_project.service.SearchFrequencyService;
 import ca.uwindsor.appliedcomputing.final_project.service.WebCrawlerService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
-
 @RestController
-@RequestMapping("/api/frequency-count")
-public class FrequencyCountController {
+@RequestMapping(path = "/api/keyword-search")
+public class KeywordSearchController {
     @Autowired
     private KeywordService keywordService;
 
     @Autowired
     private WebCrawlerService webCrawlerService;
 
-    @GetMapping
-    public KeywordSearchData getSearchFrequency(@RequestParam("q") String keywords, @RequestParam("url") String url) {
+    @GetMapping(path = "/count")
+    public KeywordSearchData getKeywordSearchCount(@RequestParam("q") String searchKeyword) throws Exception {
+        return keywordService.setKeywordSearch(searchKeyword);
+    }
+
+    @GetMapping(path = "/frequency")
+    public KeywordSearchData getKeywordSearchFrequency(@RequestParam("q") String keywords, @RequestParam("url") String url) {
         KeywordSearchData searchFData = keywordService.setKeywordSearch(keywords);
         WebCrawlerData wcData = webCrawlerService.crawlWebUrl(url);
         // Split the keywords string into an array of search keywords
@@ -40,5 +41,15 @@ public class FrequencyCountController {
         searchFData.setFrequency(frequencyTotal);
         searchFData.setUrl(url);
         return searchFData;
+    }
+
+    @GetMapping(path = "/list")
+    public List<KeywordSearchData> getKeywordSearchedList(@RequestParam("q") String type, @RequestParam(required = false, defaultValue = "10") int limit) throws Exception {
+        if (type != null && type.equalsIgnoreCase("top")) {
+            return keywordService.getTopKeywordsSearched(limit);
+        } else if (type != null && type.equalsIgnoreCase("recent")) {
+            return keywordService.getRecentKeywordsSearched();
+        }
+        return List.of();
     }
 }

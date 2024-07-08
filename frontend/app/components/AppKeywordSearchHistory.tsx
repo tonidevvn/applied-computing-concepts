@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import {SearchDataType} from "@/app/types/searchdata";
 import {QuestionCircleOutlined} from "@ant-design/icons";
 
-export default function AppSearchHistory({
+export default function AppKeywordSearchHistory({
                                              queryValue
                                          }: {
     queryValue: string

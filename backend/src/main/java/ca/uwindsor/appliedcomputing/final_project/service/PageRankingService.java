@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.*;
 
 /**
@@ -103,6 +104,7 @@ public class PageRankingService {
             PageRankingData rankingData = new PageRankingData();
             rankingData.setUrl(entry.getKey());
             rankingData.setFrequencyOfSearchKeyword(entry.getValue());
+            rankingData.setKeyword(Arrays.toString(searchKeywords));
             topRankedProducts.add(rankingData);
             count++;
         }
