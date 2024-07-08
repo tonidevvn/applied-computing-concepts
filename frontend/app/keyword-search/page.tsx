@@ -6,6 +6,7 @@ import AppKeywordSearchHistory from "@/app/components/AppKeywordSearchHistory";
 import React, {useState} from "react";
 import axios from "axios";
 import {SearchDataType} from "@/app/types/searchdata";
+import {PageRankingDataType} from "@/app/types/pageranking";
 
 export default function Page() {
 
@@ -15,6 +16,7 @@ export default function Page() {
     const [urlToBeSearched, setUrlToBeSearched] = useState('')
     const [searchResult, setSearchResult] = useState<Nullable<SearchDataType>>(null)
     const [loading, setLoading] = useState(false)
+    const [pageRankingResult, setPageRankingResult] = useState<PageRankingDataType[]>([])
 
     const onChange = (checked: boolean) => {
         console.log(`switch to ${checked}`)
@@ -29,7 +31,6 @@ export default function Page() {
 
     const fetchKeywordSearchData = async () => {
         try {
-            setLoading(true)
             setSearchResult(null)
             const response = await axios.get('/api/keyword-search/frequency', {
                 params: { q: searchValue , url: urlToBeSearched},
@@ -39,11 +40,32 @@ export default function Page() {
             setSearchResult(
                 response.data
             )
-            setLoading(false)
         } catch (error) {
             console.error('Fetch error:', error)
-            setLoading(false)
         }
+    }
+
+    const fetchPageRankingData = async () => {
+        try {
+            setPageRankingResult([])
+            const response = await axios.get('/api/page-ranking', {
+                params: { search: searchValue },
+            })
+
+            console.info(response.data)
+            setPageRankingResult(
+                response.data
+            )
+        } catch (error) {
+            console.error('Fetch error:', error)
+        }
+    }
+
+    const handleKeywordSearch = async() => {
+        setLoading(true)
+        fetchKeywordSearchData()
+        fetchPageRankingData()
+        setLoading(false)
     }
 
     return (
@@ -55,7 +77,7 @@ export default function Page() {
                     setSearchValue={setSearchValue}
                     placeholder='Search food items'
                 />
-                <Button type="primary" icon={<SearchOutlined/>} iconPosition={'end'} onClick={fetchKeywordSearchData}
+                <Button type="primary" icon={<SearchOutlined/>} iconPosition={'end'} onClick={handleKeywordSearch}
                         loading={loading}>
                     Search
                 </Button>
@@ -84,27 +106,33 @@ export default function Page() {
             <AppKeywordSearchHistory
                 queryValue={queryValue}/>
 
-
             {
+                <>
                 (searchResult ? (
-
-                            <Card title={`Search results for the keyword ‘${searchResult.keyword}’`} bordered={false}
+                            <Card title={`Search results for the keyword ‘${searchResult?.keyword}’`} bordered={false}
                                   style={{width: 360}}>
-                                <p><b>Keyword</b>: <span className="bg-yellow-200 px-2 ms-1">{searchResult.keyword}</span>
+                                <p><b>Keyword</b>: <span className="bg-yellow-200 px-2 ms-1">{searchResult?.keyword}</span>
                                 </p>
-                                <p><b>URL</b>: <a href={searchResult.url} target={"_blank"} title={searchResult.url}
+                                <p><b>URL</b>: <a href={searchResult?.url} target={"_blank"} title={searchResult?.url}
                                                   className="ms-1">Hover me</a></p>
                                 <p><b>Frequency</b>:
                                     <a href='#'
-                                       title={`Frequency of the term ‘${searchResult.keyword}’ appearing in URL(s)`}
+                                       title={`Frequency of the term ‘${searchResult?.keyword}’ appearing in URL(s)`}
                                        className="bg-yellow-200 px-2 ms-1">
-                                        {searchResult.frequency}
+                                        {searchResult?.frequency}
                                     </a>
                                 </p>
                             </Card>
                         )
                         : <></>
                 )
+
+                (pageRankingResult ? (
+                    <>
+                        { JSON.stringify(pageRankingResult)}
+                    </>
+                ))
+                </>
             }
 
         </Flex>
