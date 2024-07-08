@@ -3,8 +3,7 @@
 import React, {useState} from 'react'
 import {Flex, Button} from 'antd'
 import AppAutoComplete from "@/app/components/AppAutoComplete";
-import AppSpellChecking from "@/app/components/AppSpellChecking";
-import AppSearchHistory from "@/app/components/AppSearchHistory";
+import AppKeywordSearchHistory from "@/app/components/AppKeywordSearchHistory";
 import {SearchOutlined} from "@ant-design/icons";
 
 
@@ -24,12 +23,13 @@ export default function ProductSearch({
                     <AppAutoComplete
                         searchValue={searchValue}
                         setSearchValue={setSearchValue}
+                        placeholder='Search food items'
                     />
                     <Button type="primary" icon={<SearchOutlined />} iconPosition={'end'} onClick={() => setQueryValue(searchValue)}>
                         Search
                     </Button>
                 </Flex>
-                <AppSearchHistory
+                <AppKeywordSearchHistory
                     queryValue={queryValue}  />
             </Flex>
     )

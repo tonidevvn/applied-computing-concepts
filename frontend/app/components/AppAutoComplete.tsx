@@ -6,9 +6,11 @@ import { useDebounce } from 'use-debounce'
 export default function AppAutoComplete({
     searchValue,
     setSearchValue,
+    placeholder,
 }: {
     searchValue: string
     setSearchValue: (value: string) => void
+    placeholder: string
 }) {
     const [autoCompleteOptions, setAutoCompleteOptions] = useState<
         { value: string }[]
@@ -32,7 +34,7 @@ export default function AppAutoComplete({
     }, [debounced])
     return (
         <AutoComplete
-            placeholder='Search food items'
+            placeholder={placeholder}
             onSearch={(value) => setSearchValue(value)}
             style={{ marginBottom: 24, width: '200px' }}
             options={autoCompleteOptions}

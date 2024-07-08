@@ -2,7 +2,7 @@
 import React, {useEffect, useState} from 'react';
 import Link from "next/link";
 import { FaBars, FaTimes } from "react-icons/fa";
-import {Popover} from "antd";
+import {Flex, Popover} from "antd";
 
 export default function Navbar() {
     const [nav, setNav] = useState(false)
@@ -21,6 +21,11 @@ export default function Navbar() {
                     id: 11,
                     link: "spell-checking",
                     title: "Spell Checking",
+                },
+                {
+                    id: 12,
+                    link: "keyword-search",
+                    title: "Keyword Search",
                 }
             ]
         },
@@ -54,11 +59,11 @@ export default function Navbar() {
 
     function loadSubmenus(submenus: { id: number, link: string, title: string }[]) {
         return (
-            <div>
+            <Flex vertical={true}>
                 {submenus.map(({id, link, title}) => (
                     <Link href={link}>{title}</Link>
                     ))}
-            </div>
+            </Flex>
         )
     ;
 }
