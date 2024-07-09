@@ -23,7 +23,13 @@ export default function Page() {
         setUrlSearch(checked)
     };
 
-    const loadDemo = () => {
+    const loadDemo1 = () => {
+        setUrlSearch(false)
+        setSearchValue("sauce")
+        setUrlToBeSearched("")
+    };
+
+    const loadDemo2 = () => {
         setUrlSearch(true)
         setSearchValue("chicken")
         setUrlToBeSearched("http://www.multifoodwindsor.com/ecommerce/catalog/category/view/s/food-court%E9%A4%90%E9%A5%AE/id/69/")
@@ -63,8 +69,14 @@ export default function Page() {
 
     const handleKeywordSearch = async() => {
         setLoading(true)
-        fetchKeywordSearchData()
-        fetchPageRankingData()
+        setPageRankingResult([])
+        setSearchResult(null)
+
+        if (urlSearch) {
+            await fetchKeywordSearchData()
+        } else {
+            await fetchPageRankingData()
+        }
         setLoading(false)
     }
 
@@ -83,7 +95,10 @@ export default function Page() {
                 </Button>
             </Flex>
 
-            <a href='#' onClick={loadDemo}>Demo 1</a>
+            <Space direction="horizontal" size={"middle"}>
+            <a href='#' onClick={loadDemo1}>Demo 1</a>
+            <a href='#' onClick={loadDemo2}>Demo 2</a>
+            </Space>
 
             <Space direction="horizontal">
                 Want to search in a specific URL?
@@ -107,32 +122,48 @@ export default function Page() {
                 queryValue={queryValue}/>
 
             {
-                <>
                 (searchResult ? (
-                            <Card title={`Search results for the keyword ‘${searchResult?.keyword}’`} bordered={false}
-                                  style={{width: 360}}>
-                                <p><b>Keyword</b>: <span className="bg-yellow-200 px-2 ms-1">{searchResult?.keyword}</span>
-                                </p>
-                                <p><b>URL</b>: <a href={searchResult?.url} target={"_blank"} title={searchResult?.url}
-                                                  className="ms-1">Hover me</a></p>
-                                <p><b>Frequency</b>:
-                                    <a href='#'
-                                       title={`Frequency of the term ‘${searchResult?.keyword}’ appearing in URL(s)`}
-                                       className="bg-yellow-200 px-2 ms-1">
-                                        {searchResult?.frequency}
-                                    </a>
-                                </p>
-                            </Card>
-                        )
-                        : <></>
+                    <Card title={`Search results for the keyword ‘${searchResult?.keyword}’`} bordered={false}
+                          style={{width: 360}}>
+                        <p><b>Keyword</b>: <span className="bg-yellow-200 px-2 ms-1">{searchResult?.keyword}</span>
+                        </p>
+                        <p><b>URL</b>: <a href={searchResult?.url} target={"_blank"} title={searchResult?.url}
+                                          className="ms-1">👉👉👉 🔗 Hover me </a> </p>
+                        <p><b>Frequency</b>:
+                                <a href='#'
+                                   title={`Frequency of the term ‘${searchResult?.keyword}’ appearing in URL(s)`}
+                                   className="bg-yellow-200 px-2 ms-1">
+                                    {searchResult?.frequency}
+                                </a>
+                        </p>
+                    </Card>
                 )
-
-                (pageRankingResult ? (
-                    <>
-                        { JSON.stringify(pageRankingResult)}
-                    </>
-                ))
-                </>
+                : <></>
+                )
+            }
+            {
+                (pageRankingResult && pageRankingResult.length ? (
+                        <>
+                            <p>Top search results for ‘{searchValue}’</p>
+                            {pageRankingResult.map((pr, index) => (
+                                <Card bordered={true}
+                                      style={{width: 360}}>
+                                    <p><b>#{index + 1}</b> <a href={pr?.url} target={"_blank"} title={pr?.url}
+                                                              className="ms-1">👉👉👉 🔗 Hover me </a>
+                                    </p>
+                                    <p><b>Frequency</b>:
+                                        <a href='#'
+                                           title={`Frequency of the term ‘${pr?.keyword}’ appearing in URL(s)`}
+                                           className="bg-yellow-200 px-2 ms-1">
+                                            {pr?.frequencyOfSearchKeyword}
+                                        </a>
+                                    </p>
+                                </Card>
+                            ))
+                            }
+                        </>
+                    ) : <></>
+                )
             }
 
         </Flex>
