@@ -3,15 +3,15 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 import { AntdRegistry } from '@ant-design/nextjs-registry'
 import { ThemeProvider } from './components/theme-provider'
-import AppHeader from "@/app/components/AppHeader";
-import {Content} from "antd/lib/layout/layout";
-import {Layout} from "antd";
-import AppFooter from "@/app/components/AppFooter";
+import AppHeader from '@/app/components/AppHeader'
+import { Content } from 'antd/lib/layout/layout'
+import { Layout } from 'antd'
+import AppFooter from '@/app/components/AppFooter'
 
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-    title: 'Demo App - Made by AlgorithmAvengers team',
+    title: 'Food Price Analysis',
     description: 'Demo app for advanced computing concepts',
 }
 
@@ -28,7 +28,7 @@ export default function RootLayout({
                         <AntdRegistry>
                             <Layout>
                                 <AppHeader />
-                                <Content style={{padding: '0 48px'}}>
+                                <Content style={{ padding: '0 48px' }}>
                                     <main
                                         style={{
                                             background: '#fff',
@@ -47,5 +47,5 @@ export default function RootLayout({
                 </ThemeProvider>
             </body>
         </html>
-)
+    )
 }

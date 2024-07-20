@@ -2,9 +2,14 @@ package ca.uwindsor.appliedcomputing.final_project.util;
 
 import com.sun.tools.javac.Main;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,5 +33,38 @@ public class Resource {
             e.printStackTrace();
             return Collections.emptyList();
         }
+    }
+
+    /**
+     * This method reads a CSV file from the given path and extracts all the words from it.
+     * It reads the file line by line, splits each line into words, filters out non-alphabetic words and links,
+     * converts all words to lower case, and collects them into a list.
+     *
+     * @param csvFilePath The path of the CSV file to read.
+     * @return A list of words extracted from the file. If an exception occurs during the process, it returns an empty list.
+     */
+    public static List<String> readVocabularyFromCSV(Path csvFilePath) {
+        List<String> words = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(csvFilePath.toFile()))) {
+            String line;
+            int lineNumber = 0;
+            while ((line = br.readLine()) != null) {
+                // Skip the header line if present
+                if (lineNumber++ == 0) {
+                    continue;
+                }
+                String[] columns = line.split(",");
+                for (String column : columns) {
+                    List<String> wordsInColumn = Arrays.stream(column.strip().split("\\s+"))
+                            .filter(word -> word.matches("[a-zA-Z]+"))
+                            .map(String::toLowerCase)
+                            .toList();
+                    words.addAll(wordsInColumn);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return words;
     }
 }
