@@ -3,49 +3,20 @@ package ca.uwindsor.appliedcomputing.final_project.service;
 import ca.uwindsor.appliedcomputing.final_project.data_structure.AVLTreeWordFrequency;
 import ca.uwindsor.appliedcomputing.final_project.dto.WordFrequency;
 import ca.uwindsor.appliedcomputing.final_project.util.Resource;
+import com.sun.tools.javac.Main;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class WordCompletionService {
-    /**
-     * This method reads a CSV file from the given path and extracts all the words from it.
-     * It reads the file line by line, splits each line into words, filters out non-alphabetic words and links,
-     * converts all words to lower case, and collects them into a list.
-     *
-     * @param csvFilePath The path of the CSV file to read.
-     * @return A list of words extracted from the file. If an exception occurs during the process, it returns an empty list.
-     */
-    public List<String> readVocabularyFromCSV(Path csvFilePath) {
-        List<String> words = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(new FileReader(csvFilePath.toFile()))) {
-            String line;
-            int lineNumber = 0;
-            while ((line = br.readLine()) != null) {
-                // Skip the header line if present
-                if (lineNumber++ == 0) {
-                    continue;
-                }
-                String[] columns = line.split(",");
-                for (String column : columns) {
-                    List<String> wordsInColumn = Arrays.stream(column.strip().split("\\s+"))
-                            .filter(word -> word.matches("[a-zA-Z]+"))
-                            .map(String::toLowerCase)
-                            .toList();
-                    words.addAll(wordsInColumn);
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return words;
-    }
+
 
     /**
      * This method builds a frequency map of words. It takes a list of words as input and returns a map where the keys are the words and the values are the frequencies of each word.
@@ -155,23 +126,27 @@ public class WordCompletionService {
 
     public List<WordFrequency> getWordSuggestions(String prefix) {
         // Read all words from the CSV files in the resources directory
-        List<String> words = Resource.walkResources().stream()
-                .flatMap(path -> readVocabularyFromCSV(path).stream())
-                .collect(Collectors.toList());
+        try {
 
-        // Build a frequency map of the words
-        Map<String, Integer> wordFrequencies = buildWordFrequencies(words);
+            List<String> words = Resource.readVocabularyFromCSV(Paths.get(Objects.requireNonNull(Main.class.getClassLoader().getResource("data/merged_dataset.csv")).toURI()));
 
-        // Build an AVL tree from the frequency map
-        AVLTreeWordFrequency<WordFrequency> tree = buildTree(wordFrequencies);
+            // Build a frequency map of the words
+            Map<String, Integer> wordFrequencies = buildWordFrequencies(words);
 
-        // Traverse the AVL tree to find the first node where the word starts with the prefix
-        AVLTreeWordFrequency.AvlNode<WordFrequency> node = traverseByPrefix(tree.getRoot(), prefix);
+            // Build an AVL tree from the frequency map
+            AVLTreeWordFrequency<WordFrequency> tree = buildTree(wordFrequencies);
 
-        // Collect all the words in the subtree of the found node that start with the prefix
-        List<WordFrequency> subTreeWords = collectSubTreeWords(node, prefix);
+            // Traverse the AVL tree to find the first node where the word starts with the prefix
+            AVLTreeWordFrequency.AvlNode<WordFrequency> node = traverseByPrefix(tree.getRoot(), prefix);
 
-        // Rank the collected words based on their frequency of occurrence and print them to the console
-        return rankWords(subTreeWords);
+            // Collect all the words in the subtree of the found node that start with the prefix
+            List<WordFrequency> subTreeWords = collectSubTreeWords(node, prefix);
+
+            // Rank the collected words based on their frequency of occurrence and print them to the console
+            return rankWords(subTreeWords);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return Collections.emptyList();
     }
 }
