@@ -15,7 +15,7 @@ export default function AppAutoComplete({
     const [autoCompleteOptions, setAutoCompleteOptions] = useState<
         { value: string }[]
     >([])
-    const [debounced ] = useDebounce(searchValue, 1000);
+    const [debounced] = useDebounce(searchValue, 100)
 
     useEffect(() => {
         const fetchAutoCompleteData = async () => {
@@ -36,7 +36,7 @@ export default function AppAutoComplete({
         <AutoComplete
             placeholder={placeholder}
             onSearch={(value) => setSearchValue(value)}
-            style={{ marginBottom: 24, width: '200px' }}
+            className='flex-grow'
             options={autoCompleteOptions}
             value={searchValue}
             onSelect={(value) => setSearchValue(value)}

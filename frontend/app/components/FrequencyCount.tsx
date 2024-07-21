@@ -36,7 +36,7 @@ const FrequencyCount: React.FC = () => {
     }
 
     return (
-        <div>
+        <div className='bg-white rounded-lg p-6'>
             <h1>Search Frequency & Search Count</h1>
             <Form
                 name='basic'

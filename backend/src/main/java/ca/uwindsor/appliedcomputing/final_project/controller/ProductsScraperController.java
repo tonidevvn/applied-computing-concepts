@@ -16,9 +16,9 @@ public class ProductsScraperController {
 
     @GetMapping
     public Page<ProductData> getProductsByPage(@RequestParam(required = false, defaultValue = "0") int page,
-                                               @RequestParam(required = false, defaultValue = "10") int size,
+                                               @RequestParam(required = false, defaultValue = "10") int limit,
                                                @RequestParam(name = "q", required = false) String query) {
-        return productService.fetchProductListByPage(query, page, size);
+        return productService.fetchProductListByPage(query, page, limit);
     }
 
     @GetMapping(path = "/scraping")
