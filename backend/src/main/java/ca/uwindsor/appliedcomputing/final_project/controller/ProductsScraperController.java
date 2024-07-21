@@ -3,6 +3,7 @@ package ca.uwindsor.appliedcomputing.final_project.controller;
 import ca.uwindsor.appliedcomputing.final_project.dto.ProductData;
 import ca.uwindsor.appliedcomputing.final_project.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,23 +14,11 @@ public class ProductsScraperController {
     @Autowired
     private ProductService productService;
 
-    @GetMapping(path = "")
-    public List<ProductData> getProducts(@RequestParam(required = false, defaultValue = "10") int limit, @RequestParam(name = "q", required = false) String query) {
-        if (query != null && !query.trim().isEmpty()) {
-            return productService.getProducts(limit, query);
-        } else {
-            return productService.getProducts(limit);
-        }
-    }
-
-    @GetMapping(path = "/low-to-high")
-    public List<ProductData> getProductsFromLowToHighPrice() throws Exception {
-        return productService.getSortedProductsByPrice(0);
-    }
-
-    @GetMapping(path = "/high-to-low")
-    public List<ProductData> getProductsFromHighToLowPrice() throws Exception {
-        return productService.getSortedProductsByPrice(1);
+    @GetMapping
+    public Page<ProductData> getProductsByPage(@RequestParam(required = false, defaultValue = "0") int page,
+                                               @RequestParam(required = false, defaultValue = "10") int size,
+                                               @RequestParam(name = "q", required = false) String query) {
+        return productService.fetchProductListByPage(query, page, size);
     }
 
     @GetMapping(path = "/scraping")
