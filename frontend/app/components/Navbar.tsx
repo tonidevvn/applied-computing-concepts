@@ -17,6 +17,11 @@ export default function Navbar() {
             link: 'data-validation',
             title: 'Data Validation',
         },
+        {
+            id: 2,
+            link: 'web-crawler',
+            title: 'Web Crawler',
+        },
     ]
     // Function to hide nav on resize
     const handleResize = () => {

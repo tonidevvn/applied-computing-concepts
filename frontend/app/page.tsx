@@ -138,7 +138,7 @@ export default function Products() {
 
             <div className='grid grid-row-4 grid-flow-col gap-4'>
                 <div className='row-span-4 col-span-6'>
-                    <div className='bg-white rounded-lg p-6'>
+                    <div className='bg-white rounded-lg p-6 mb-4'>
                         <h1 className='text-3xl font-bold mb-4'>Products</h1>
                         <div className='flex flex-col gap-4'>
                             <FoodItem items={items} />
@@ -197,7 +197,7 @@ export default function Products() {
                                         dataIndex: 'url',
                                         title: 'URL',
                                         ellipsis: true,
-                                        width: 300,
+                                        width: 250,
                                         render: (url: string) => (
                                             <a
                                                 href={url}
