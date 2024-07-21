@@ -12,11 +12,11 @@ export default function Navbar() {
             link: '/',
             title: 'Home',
         },
-        // {
-        //     id: 12,
-        //     link: 'keyword-search',
-        //     title: 'Keyword Search',
-        // },
+        {
+            id: 2,
+            link: 'data-validation',
+            title: 'Data Validation',
+        },
     ]
     // Function to hide nav on resize
     const handleResize = () => {

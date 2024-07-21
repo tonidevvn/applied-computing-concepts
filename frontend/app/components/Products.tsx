@@ -78,7 +78,6 @@ export default function Products() {
                 params: { search: searchValue },
             })
 
-            console.info(response.data)
             setPageRankingResult(response.data)
         } catch (error) {
             console.error('Fetch error:', error)
