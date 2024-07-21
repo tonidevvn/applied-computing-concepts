@@ -1,10 +1,14 @@
 package ca.uwindsor.appliedcomputing.final_project.util;
 
+import ca.uwindsor.appliedcomputing.final_project.dto.ProductData;
+import com.opencsv.CSVReader;
+import com.opencsv.exceptions.CsvException;
 import com.sun.tools.javac.Main;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -66,5 +70,33 @@ public class Resource {
             e.printStackTrace();
         }
         return words;
+    }
+
+
+
+    public List<ProductData> loadProductsFromCSV(int limit) {
+        List<ProductData> responseProducts = new ArrayList<>();
+        try (CSVReader csvReader = new CSVReader(new FileReader(Paths.get(Main.class.getClassLoader().getResource("data/merged_dataset.csv").toURI()).toFile()))) {
+            List<String[]> records = csvReader.readAll();
+            records.remove(0); // Remove header row
+
+            int count = 0;
+            for (String[] record : records) {
+                ProductData responseProduct = new ProductData();
+                if (record.length == 5) {
+                    responseProduct.setName(record[0]);
+                    //responseProduct.setBrand(record[2]);
+                    responseProduct.setPrice(record[1]);
+                    responseProduct.setImage(record[2]);
+                    responseProduct.setUrl(record[3]);
+                    responseProduct.setDescription(record[4]);
+                    if (responseProduct.getName() != null && count++ < limit)
+                        responseProducts.add(responseProduct);
+                }
+            }
+            return responseProducts;
+        } catch (IOException | CsvException | URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

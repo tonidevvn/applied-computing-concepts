@@ -4,11 +4,7 @@ import ca.uwindsor.appliedcomputing.final_project.config.ScraperConfig;
 import ca.uwindsor.appliedcomputing.final_project.dto.MainPage;
 import ca.uwindsor.appliedcomputing.final_project.dto.ProductData;
 import ca.uwindsor.appliedcomputing.final_project.repository.ProductRepository;
-import ca.uwindsor.appliedcomputing.final_project.util.Sorting;
 import ca.uwindsor.appliedcomputing.final_project.util.WebDriverHelper;
-import com.opencsv.CSVReader;
-import com.opencsv.exceptions.CsvException;
-import com.sun.tools.javac.Main;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
@@ -16,12 +12,11 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.io.FileReader;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,88 +50,16 @@ public class ProductService {
         driver = null;
     }
 
-    public List<ProductData> getProducts() {
-        return getProducts(10);
-    }
-
-    public List<ProductData> getProducts(int limit) {
-        // re-update limit number
-        if (limit == -1)
-            limit = 100;
-        else if (limit <= 0)
-            limit = 10;
-
-        //List<ProductData> responseProducts = loadProductsFromCSV(limit);
-        return fetchProductList(limit);
-    }
-
-    public List<ProductData> getProducts(int limit, String query) {
-        // re-update limit number
-        if (limit == -1)
-            limit = 100;
-        else if (limit <= 0)
-            limit = 10;
-
-        //List<ProductData> responseProducts = loadProductsFromCSV(limit);
-        return fetchProductList(limit, query);
-    }
-
     // Save operation
     ProductData saveProduct(ProductData product) {
         return productRepository.save(product);
     }
 
-    // Read operation
-    public List<ProductData> fetchProductList() {
-        return (List<ProductData>)
-                productRepository.findAll();
-    }
-
-    // Read operation
-    public List<ProductData> fetchProductList(int limit) {
-        return (List<ProductData>)
-                productRepository.fetchProductList(limit);
-    }
-
-    // Read operation
-    public List<ProductData> fetchProductList(int limit, String query) {
-        if (!query.trim().isEmpty()) {
-            return (List<ProductData>)
-                    productRepository.findByKeywordWithLimit(query, limit);
+    public Page<ProductData> fetchProductListByPage(String kw, int page, int limit) {
+        if (kw == null || kw.trim().isEmpty()) {
+            return productRepository.findAll(PageRequest.of(page, limit, Sort.by("price")));
         }
-        return fetchProductList(limit);
-    }
-
-    public List<ProductData> loadProductsFromCSV(int limit) {
-        List<ProductData> responseProducts = new ArrayList<>();
-        try (CSVReader csvReader = new CSVReader(new FileReader(Paths.get(Main.class.getClassLoader().getResource("data/merged_dataset.csv").toURI()).toFile()))) {
-            List<String[]> records = csvReader.readAll();
-            records.remove(0); // Remove header row
-
-            int count = 0;
-            for (String[] record : records) {
-                ProductData responseProduct = new ProductData();
-                if (record.length == 5) {
-                    responseProduct.setName(record[0]);
-                    //responseProduct.setBrand(record[2]);
-                    responseProduct.setPrice(record[1]);
-                    responseProduct.setImage(record[2]);
-                    responseProduct.setUrl(record[3]);
-                    responseProduct.setDescription(record[4]);
-                    if (responseProduct.getName() != null && count++ < limit)
-                        responseProducts.add(responseProduct);
-                }
-            }
-            return responseProducts;
-        } catch (IOException | CsvException | URISyntaxException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public List<ProductData> getSortedProductsByPrice(int type) {
-        List<ProductData> responseProducts = getProducts();
-        Sorting.quickSort(responseProducts, type);
-        return responseProducts;
+        return productRepository.findByKeyword("%" + kw + "%", PageRequest.of(page, limit));
     }
 
     public List<ProductData> getProductsByKeyword(String keyword) throws Exception {

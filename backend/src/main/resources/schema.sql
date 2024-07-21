@@ -1,7 +1,7 @@
-CREATE TABLE ProductData (
+CREATE TABLE product_data (
  id bigint not null AUTO_INCREMENT,
  name varchar(256) not null,
- price varchar(256),
+ price float not null,
  image varchar(max),
  url varchar(max),
  description varchar(max),

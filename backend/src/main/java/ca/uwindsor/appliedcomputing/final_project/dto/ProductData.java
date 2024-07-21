@@ -9,7 +9,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity
+@Entity(name = "product_data")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

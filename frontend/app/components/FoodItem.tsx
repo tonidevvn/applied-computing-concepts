@@ -42,7 +42,7 @@ function FoodItem({ items }: { items: FoodItemType[] }) {
                             </p>
                             <div className='mt-4 text-center'>
                                 <p className='text-xl font-bold'>
-                                    {item.price}
+                                    ${item.price}
                                 </p>
                             </div>
                         </div>
