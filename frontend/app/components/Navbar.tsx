@@ -14,35 +14,8 @@ export default function Navbar() {
         },
         {
             id: 2,
-            link: 'tools',
-            title: 'Tools',
-            submenus: [
-                {
-                    id: 11,
-                    link: 'spell-checking',
-                    title: 'Spell Checking',
-                },
-                {
-                    id: 12,
-                    link: 'keyword-search',
-                    title: 'Keyword Search',
-                },
-                {
-                    id: 13,
-                    link: 'inverted-index',
-                    title: 'Inverted Index',
-                },
-            ],
-        },
-        {
-            id: 3,
-            link: 'shop',
-            title: 'Shop',
-        },
-        {
-            id: 4,
-            link: 'contact',
-            title: 'Contact',
+            link: 'data-validation',
+            title: 'Data Validation',
         },
     ]
     // Function to hide nav on resize
