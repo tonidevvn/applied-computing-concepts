@@ -5,21 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6b145f1a-79ed-4e90-b14c-32ee67d28f88" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/ca/uwindsor/appliedcomputing/final_project/dto/PriceConditionItem.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/ca/uwindsor/appliedcomputing/final_project/spec/ProductSpecification.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/ca/uwindsor/appliedcomputing/final_project/util/PriceUtil.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/final-project.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/final-project.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/src/main/java/ca/uwindsor/appliedcomputing/final_project/controller/ProductsScraperController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/ca/uwindsor/appliedcomputing/final_project/controller/ProductsScraperController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/ca/uwindsor/appliedcomputing/final_project/dto/ProductData.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/ca/uwindsor/appliedcomputing/final_project/dto/ProductData.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/ca/uwindsor/appliedcomputing/final_project/repository/ProductRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/ca/uwindsor/appliedcomputing/final_project/repository/ProductRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/ca/uwindsor/appliedcomputing/final_project/service/ProductService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/ca/uwindsor/appliedcomputing/final_project/service/ProductService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/ca/uwindsor/appliedcomputing/final_project/service/SpellCheckingService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/ca/uwindsor/appliedcomputing/final_project/service/SpellCheckingService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/ca/uwindsor/appliedcomputing/final_project/util/Resource.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/ca/uwindsor/appliedcomputing/final_project/util/Resource.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/ca/uwindsor/appliedcomputing/final_project/util/Sorting.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/ca/uwindsor/appliedcomputing/final_project/util/Sorting.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/app/components/Navbar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/app/components/Navbar.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
