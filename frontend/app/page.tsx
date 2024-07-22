@@ -18,7 +18,6 @@ import FoodItem from '@/app/components/FoodItem'
 import { InvertedIndexType } from '@/app/types/invertedindex'
 import InvertedIndex from '@/app/components/InvertedIndex'
 import { PageRankingDataType } from '@/app/types/pageranking'
-import FrequencyCount from './components/FrequencyCount'
 import AppAutoComplete from './components/AppAutoComplete'
 import { useAppStore } from '@/stores/app-store-provider'
 import { useDebounce } from 'use-debounce'
@@ -30,7 +29,7 @@ export default function Products() {
     const { searchValue, setSearchValue } = useAppStore((state) => state)
 
     const [page, setPage] = useState(1)
-    const [limit, setLimit] = useState(10)
+    const [size, setSize] = useState(8)
     const [total, setTotal] = useState(0)
 
     const { spellCheckOptions, setSpellCheckOptions } = useAppStore(
@@ -51,7 +50,7 @@ export default function Products() {
                 params: {
                     q: searchValue,
                     page: page - 1,
-                    limit,
+                    size,
                 },
             })
             setItems(response.data.content)
@@ -98,7 +97,7 @@ export default function Products() {
 
     useEffect(() => {
         onFetchProducts()
-    }, [limit, page])
+    }, [size, page])
 
     const onSearch = async () => {
         setLoading(true)
@@ -152,7 +151,7 @@ export default function Products() {
         pageSize
     ) => {
         setPage(current)
-        setLimit(pageSize)
+        setSize(pageSize)
     }
     if (loading) {
         return <div>Loading...</div>
@@ -183,8 +182,10 @@ export default function Products() {
                 <div className='row-span-4 col-span-6'>
                     <div className='bg-white rounded-lg p-6 mb-4'>
                         <h1 className='text-3xl font-bold mb-4'>Products</h1>
-                        <div className='flex flex-col gap-4'>
-                            <FoodItem items={items} />
+                        <div className='flex flex-col gap-4 '>
+                            <div className='overflow-auto'>
+                                <FoodItem items={items} />
+                            </div>
                             <div className='flex justify-end'>
                                 <div className='mt-4'>
                                     <Pagination
@@ -193,6 +194,8 @@ export default function Products() {
                                         total={total}
                                         onChange={onPaginationChange}
                                         showSizeChanger
+                                        pageSizeOptions={['8', '16', '24']}
+                                        pageSize={size}
                                     />
                                 </div>
                             </div>

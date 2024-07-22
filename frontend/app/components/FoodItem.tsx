@@ -17,31 +17,30 @@ const truncateText = (text: string, maxLength: number) => {
 
 function FoodItem({ items }: { items: FoodItemType[] }) {
     return (
-        <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-4 overflow-auto'>
+        <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 gap-6'>
             {items &&
                 items.map((item, index) => (
                     <div
                         key={index}
-                        className='bg-white rounded-lg shadow-lg overflow-hidden'
+                        className='bg-white rounded-lg shadow-lg overflow-hidden transform transition-transform hover:scale-105 m-2 cursor-pointer'
+                        onClick={() => window.open(item.url, '_blank')}
                     >
-                        <div className='relative h-48'>
+                        <div className='relative h-40'>
                             <Image
                                 src={item.image}
                                 alt={item.name}
-                                fill
+                                layout='fill'
                                 objectFit='contain'
                                 className='w-full h-full object-cover'
                             />
                         </div>
                         <div className='p-4'>
-                            <h3 className='text-lg font-semibold'>
-                                {item.name}
-                            </h3>
-                            <p className='text-gray-700'>
+                            <h4 className='font-semibold mb-2'>{item.name}</h4>
+                            <p className='text-gray-600 mb-4'>
                                 {truncateText(item.description, 100)}
                             </p>
                             <div className='mt-4 text-center'>
-                                <p className='text-xl font-bold'>
+                                <p className='text-xl font-bold text-green-600'>
                                     ${item.price}
                                 </p>
                             </div>

@@ -36,7 +36,6 @@ const FrequencyCount: React.FC = () => {
     const onFinishFailed = (errorInfo: any) => {
         console.error('Failed:', errorInfo)
     }
-
     return (
         <div className='bg-white rounded-lg p-6'>
             <h1>Search Frequency & Search Count</h1>
@@ -81,7 +80,7 @@ const FrequencyCount: React.FC = () => {
                 </Form.Item>
             </Form>
             <div className='mt-6 w-full max-w-md bg-white p-6 rounded-lg shadow-md'>
-                {result.frequency !== null ? (
+                {Object.keys(result).length !== 0 ? (
                     <div>
                         <p>
                             There are a total of {result.frequency} occurrences
