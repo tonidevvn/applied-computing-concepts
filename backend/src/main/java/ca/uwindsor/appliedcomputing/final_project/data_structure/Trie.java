@@ -14,16 +14,13 @@ public class Trie {
     }
 
     // Add a word to the trie with the corresponding document ID and type
-    public void insert(String word, int docId, String name, String description) {
+    public void insert(String word, int docId, String name) {
         TrieNode node = root;
         for (char ch : word.toCharArray()) {
             node = node.children.computeIfAbsent(ch, c -> new TrieNode());
             node.documentIds.add(docId);
             if (name != null) {
                 node.names.put(docId, name);
-            }
-            if (description != null) {
-                node.descriptions.put(docId, description);
             }
         }
     }
@@ -47,7 +44,6 @@ public class Trie {
             if (entry.getValue().documentIds.contains(docId)) {
                 Map<String, String> textData = new HashMap<>();
                 textData.put("name", entry.getValue().names.get(docId));
-                textData.put("description", entry.getValue().descriptions.get(docId));
                 return textData;
             }
         }

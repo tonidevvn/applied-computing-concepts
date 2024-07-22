@@ -12,10 +12,6 @@ function InvertedIndex({ data }: { data: InvertedIndexType[] }) {
             dataIndex: 'name',
             title: 'Name',
         },
-        {
-            dataIndex: 'description',
-            title: 'Description',
-        },
     ]
 
     return (

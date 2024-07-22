@@ -40,11 +40,11 @@ public class InvertedIndexingService {
                     lineNumber++;
                     continue;
                 }
-                String[] columns = line.split(",", 5);
+                String[] columns = line.split(",", 7);
                 // Check if the row has enough columns
                 if (columns.length >= 5) {
                     // Add product name and description to trie
-                    addToTrie(columns[0], lineNumber, columns[0], columns[4]);  // Adding name and description
+                    addToTrie(columns[0], lineNumber, columns[0]);  // Adding name and description
                 }
                 lineNumber++;
             }
@@ -54,13 +54,13 @@ public class InvertedIndexingService {
     }
 
     // Helper method to add words to the trie
-    private void addToTrie(String text, int docId, String name, String description) {
+    private void addToTrie(String text, int docId, String name) {
         if (text == null || text.trim().isEmpty()) {
             return;
         }
         String[] terms = text.trim().split("\\s+");
         for (String term : terms) {
-            trie.insert(term.toLowerCase(), docId, name, description);
+            trie.insert(term.toLowerCase(), docId, name);
         }
     }
 
@@ -71,7 +71,6 @@ public class InvertedIndexingService {
             Map<String, String> doc = new HashMap<>();
             Map<String, String> text = trie.getText(docId);
             doc.put("name", text.get("name"));
-            doc.put("description", text.get("description"));
             doc.put("docId", String.valueOf(docId));
             result.add(doc);
         }

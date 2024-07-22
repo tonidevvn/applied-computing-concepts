@@ -35,10 +35,10 @@ public class DataValidationService {
             while ((record = reader.readNext()) != null) {
                 ValidationData data = new ValidationData();
                 data.setProductName(record[0]); // Assuming index 0 contains product name
-                data.setPrice(record[1]); // Assuming index 1 contains price
-                data.setImageUrl(record[2]); // Assuming index 2 contains image URL
-                data.setProductUrl(record[3]); // Assuming index 3 contains product URL
-                data.setProductDescription(record.length > 4 ? record[4] : ""); // Assuming index 4 contains description
+                data.setPrice(record[3]); // Assuming index 1 contains price
+                data.setImageUrl(record[4]); // Assuming index 2 contains image URL
+                data.setProductUrl(record[5]); // Assuming index 3 contains product URL
+                data.setProductDescription(record.length > 6 ? record[6] : ""); // Assuming index 4 contains description
 
                 validate(data);
                 validationResults.add(data);

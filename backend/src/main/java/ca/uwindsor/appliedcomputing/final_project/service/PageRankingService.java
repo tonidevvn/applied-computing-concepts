@@ -47,9 +47,9 @@ public class PageRankingService {
 
             String[] record;
             while ((record = reader.readNext()) != null) {
-                String productLink = record[3]; // Assuming index 3 contains product link
+                String productLink = record[5]; // Assuming index 3 contains product link
                 String productName = record[0].toLowerCase(); // Assuming index 0 contains product name
-                String productDescription = record.length > 4 ? record[4].toLowerCase() : ""; // Assuming index 4 contains product description
+                String productDescription = record.length > 6 ? record[6].toLowerCase() : ""; // Assuming index 4 contains product description
 
                 // Split combined product name and description into individual keywords
                 String[] keywords = (productName + " " + productDescription).split("\\s+");
