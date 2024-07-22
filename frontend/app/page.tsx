@@ -11,6 +11,7 @@ import {
     Pagination,
     Table,
     Button,
+    Select,
 } from 'antd'
 import axios from 'axios'
 import ProductSearch from '@/app/components/ProductSearch'
@@ -27,6 +28,8 @@ export default function Products() {
     const [loading, setLoading] = useState(false)
 
     const { searchValue, setSearchValue } = useAppStore((state) => state)
+    const [category, setCategory] = useState('')
+    const [store, setStore] = useState('')
 
     const [page, setPage] = useState(1)
     const [size, setSize] = useState(8)
@@ -51,6 +54,8 @@ export default function Products() {
                     q: searchValue,
                     page: page - 1,
                     size,
+                    category,
+                    store,
                 },
             })
             setItems(response.data.content)
@@ -161,11 +166,62 @@ export default function Products() {
         <div className='container mx-auto p-4'>
             <div className='p-6 my-4 bg-white rounded-lg shadow-md'>
                 <h1 className='text-3xl font-bold mb-4'>Search Bar</h1>
-                <div className='flex items-center gap-4'>
+                <div className='grid grid-cols-4 items-center gap-4'>
                     <AppAutoComplete
                         searchValue={searchValue}
                         setSearchValue={setSearchValue}
                         placeholder='Search food items'
+                    />
+                    <Select
+                        value={category}
+                        options={[
+                            {
+                                value: '',
+                                label: 'All',
+                            },
+                            {
+                                value: 'Meat & Poultry',
+                                label: 'Meat & Poultry',
+                            },
+                            { value: 'Grocery', label: 'Grocery' },
+                            {
+                                value: 'Fish & Seafood',
+                                label: 'Fish & Seafood',
+                            },
+                            { value: 'Bakery', label: 'Bakery' },
+                            { value: 'Dairy & Eggs', label: 'Dairy & Eggs' },
+                            { value: 'Frozen Food', label: 'Frozen Food' },
+                        ]}
+                        onChange={(value) => setCategory(value)}
+                        placeholder='Category'
+                    />
+                    <Select
+                        value={store}
+                        options={[
+                            {
+                                value: '',
+                                label: 'All',
+                            },
+                            {
+                                value: 'multifood',
+                                label: 'Multifood',
+                            },
+                            { value: 'nofrills', label: 'NoFrills' },
+                            {
+                                value: 'foodbasic',
+                                label: 'FoodBasic',
+                            },
+                            {
+                                value: 'loblaws',
+                                label: 'Loblaws',
+                            },
+                            {
+                                value: 'zehrs',
+                                label: 'Zehrs',
+                            },
+                        ]}
+                        onChange={(value) => setStore(value)}
+                        placeholder='Store'
                     />
                     <button
                         onClick={() => {
@@ -179,10 +235,13 @@ export default function Products() {
             </div>
 
             <div className='grid grid-row-4 grid-flow-col gap-4'>
-                <div className='row-span-4 col-span-6'>
+                <div
+                    className='row-span-4 col-span-6'
+                    style={{ width: '1000px' }}
+                >
                     <div className='bg-white rounded-lg p-6 mb-4'>
                         <h1 className='text-3xl font-bold mb-4'>Products</h1>
-                        <div className='flex flex-col gap-4 '>
+                        <div className='flex flex-col gap-4'>
                             <div className='overflow-auto'>
                                 <FoodItem items={items} />
                             </div>

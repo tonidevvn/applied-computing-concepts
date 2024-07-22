@@ -19,11 +19,13 @@ public class ProductsScraperController {
 
     @GetMapping
     public Page<ProductData> getProducts(@RequestParam(required = false, name = "q") String q,
+                                         @RequestParam(required = false, name = "category") String category,
+                                         @RequestParam(required = false, name = "store") String store,
                                          @RequestParam(required = false, defaultValue = "0") int page,
                                          @RequestParam(required = false, defaultValue = "10") int size) {
         Sort sort = Sort.by(Sort.Direction.ASC, "price");
         Pageable pageable = PageRequest.of(page, size, sort);
-        return productService.findProducts(q, pageable);
+        return productService.findProducts(q, category, store, pageable);
     }
 
     @GetMapping(path = "/scraping")

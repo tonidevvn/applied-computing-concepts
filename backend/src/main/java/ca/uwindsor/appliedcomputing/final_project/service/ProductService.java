@@ -64,7 +64,7 @@ public class ProductService {
         return productRepository.save(product);
     }
 
-    public Page<ProductData> findProducts(String q, Pageable pageable) {
+    public Page<ProductData> findProducts(String q, String category, String store, Pageable pageable) {
         String[] qParts = q.split("\\s+");
         String priceQuery = Arrays.stream(qParts).filter(kw -> !PriceUtil.parsePriceQuery(kw).isEmpty()).findFirst().orElse("");
         String kwQuery = Arrays.stream(qParts).filter(kw -> !kw.contains("price")).collect(Collectors.joining(" "));
@@ -73,6 +73,12 @@ public class ProductService {
         Double maxPrice = items.stream().filter(item -> item.op.equals("<=")).map(item -> item.value).findFirst().orElse(Double.MAX_VALUE);
         Specification<ProductData> spec = Specification.where(ProductSpecification.hasName(kwQuery))
                 .and(ProductSpecification.hasPrice(minPrice, maxPrice));
+        if (!category.isBlank()) {
+            spec = spec.and(ProductSpecification.hasCategory(category));
+        }
+        if (!store.isBlank()) {
+            spec = spec.and(ProductSpecification.hasStore(store));
+        }
         return productRepository.findAll(spec, pageable);
     }
 

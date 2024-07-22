@@ -27,4 +27,14 @@ public class ProductSpecification {
         return (root, query, criteriaBuilder) ->
                 criteriaBuilder.equal(root.get("price"), price);
     }
+
+    public static Specification<ProductData> hasCategory(String category) {
+        return (root, query, criteriaBuilder) ->
+                criteriaBuilder.equal(root.get("category"), category);
+    }
+
+    public static Specification<ProductData> hasStore(String store) {
+        return (root, query, criteriaBuilder) ->
+                criteriaBuilder.equal(root.get("store"), store);
+    }
 }
