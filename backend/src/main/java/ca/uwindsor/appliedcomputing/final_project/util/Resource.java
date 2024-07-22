@@ -4,38 +4,32 @@ import ca.uwindsor.appliedcomputing.final_project.dto.ProductData;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
 import com.sun.tools.javac.Main;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
+@Slf4j
 public class Resource {
     /**
      * This method is used to walk through the resources directory and return a list of absolute paths of all regular files.
      *
      * @return A list of absolute paths of all regular files in the resources directory. If an exception occurs, it returns an empty list.
      */
-    public static List<Path> walkResources() {
+    public static Path getMergedDataSet() {
         try {
-            Path resourcePath = Paths.get(Main.class.getClassLoader().getResource("data").toURI());
-            try (Stream<Path> paths = Files.walk(resourcePath)) {
-                return paths.filter(Files::isRegularFile)
-                        .map(Path::toAbsolutePath)
-                        .collect(Collectors.toList());
-            }
-        } catch (Exception e) {
+            return Paths.get(Main.class.getClassLoader().getResource("data/merged_dataset.csv").toURI());
+        } catch (URISyntaxException e) {
+            log.info(e.getMessage());
             e.printStackTrace();
-            return Collections.emptyList();
+            return null;
         }
     }
 

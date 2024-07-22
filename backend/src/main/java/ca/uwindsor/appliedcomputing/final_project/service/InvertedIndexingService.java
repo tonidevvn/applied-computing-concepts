@@ -1,6 +1,7 @@
 package ca.uwindsor.appliedcomputing.final_project.service;
 
 import ca.uwindsor.appliedcomputing.final_project.data_structure.Trie;
+import ca.uwindsor.appliedcomputing.final_project.util.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +30,7 @@ public class InvertedIndexingService {
 
     // Read merged_csv file
     public void readMergedCsv() {
-        Path csvFilePath = Paths.get("src/main/resources/data/merged_dataset.csv");
+        Path csvFilePath = Resource.getMergedDataSet();
         try (BufferedReader br = new BufferedReader(new FileReader(csvFilePath.toFile()))) {
             String line;
             int lineNumber = 0;

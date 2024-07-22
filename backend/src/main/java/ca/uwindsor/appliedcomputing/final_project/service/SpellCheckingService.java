@@ -117,7 +117,7 @@ public class SpellCheckingService {
             HashSet<String> uniqueKeywords = new HashSet<>();
             while ((strLine = br.readLine()) != null) {
                 // remove special characters from the line
-                strLine = strLine.replaceAll("[^\\w\\s]","");
+                strLine = strLine.replaceAll("[^\\w\\s]|\\d","");
 
                 // Collect words and ignore white spaces
                 String[] strWords = strLine.split("\\s+");
@@ -135,20 +135,20 @@ public class SpellCheckingService {
 
     }
 
-    private List<String> readFilesAndBuildVocabulary() {
-        return Resource.walkResources().stream()
-                .flatMap(path -> uniqueKeywordFromCSV(path).stream())
-                .distinct().toList();
-    }
-
     public List<DistanceEntry> spellChecking(String strCheckingWord) {
+        String trimWord = strCheckingWord.trim();
+        if (trimWord.isBlank()) {
+            return new ArrayList<>();
+        }
         // build a vocabulary
-        List<String> hsVocabulary = readFilesAndBuildVocabulary();
+        List<String> hsVocabulary = uniqueKeywordFromCSV(Resource.getMergedDataSet())
+                .stream()
+                .toList();
 
         // calculate distances
         List<DistanceEntry> lDistanceWords = new ArrayList<>();
         for (String word : hsVocabulary) {
-            int distance = editDistance(strCheckingWord, word);
+            int distance = editDistance(trimWord, word);
             DistanceEntry entry = new DistanceEntry(distance, word);
             lDistanceWords.add(entry);
         }
