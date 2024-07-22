@@ -65,8 +65,8 @@ public class Sorting {
     }
 
     private static boolean comparePrice(ProductData a, ProductData b, int type) {
-        double priceA = parsePrice(a.getPrice());
-        double priceB = parsePrice(b.getPrice());
+        double priceA = a.getPrice();
+        double priceB = b.getPrice();
         return type == 0 ? priceA < priceB : priceA > priceB;
     }
 

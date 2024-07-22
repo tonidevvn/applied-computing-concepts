@@ -12,13 +12,12 @@ import java.util.HashSet;
 import java.util.List;
 
 
-enum SortOrder {
-    ASCENDING,
-    DESCENDING
-}
-
 @Service
 public class SpellCheckingService {
+    enum SortOrder {
+        ASCENDING,
+        DESCENDING
+    }
     // A convenient function that accepts default parameters
     private void mergeSort(List<DistanceEntry> arr) {
         mergeSort(arr, 0, arr.size() - 1, SortOrder.ASCENDING);

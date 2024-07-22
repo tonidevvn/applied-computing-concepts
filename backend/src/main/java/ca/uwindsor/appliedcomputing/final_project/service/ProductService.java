@@ -2,9 +2,13 @@ package ca.uwindsor.appliedcomputing.final_project.service;
 
 import ca.uwindsor.appliedcomputing.final_project.config.ScraperConfig;
 import ca.uwindsor.appliedcomputing.final_project.dto.MainPage;
+import ca.uwindsor.appliedcomputing.final_project.dto.PriceConditionItem;
 import ca.uwindsor.appliedcomputing.final_project.dto.ProductData;
 import ca.uwindsor.appliedcomputing.final_project.repository.ProductRepository;
+import ca.uwindsor.appliedcomputing.final_project.spec.ProductSpecification;
+import ca.uwindsor.appliedcomputing.final_project.util.PriceUtil;
 import ca.uwindsor.appliedcomputing.final_project.util.WebDriverHelper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
@@ -14,13 +18,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class ProductService {
     @Autowired
     private final ProductRepository productRepository;
@@ -55,11 +64,16 @@ public class ProductService {
         return productRepository.save(product);
     }
 
-    public Page<ProductData> fetchProductListByPage(String kw, int page, int limit) {
-        if (kw == null || kw.trim().isEmpty()) {
-            return productRepository.findAll(PageRequest.of(page, limit, Sort.by("price")));
-        }
-        return productRepository.findByKeyword("%" + kw + "%", PageRequest.of(page, limit));
+    public Page<ProductData> findProducts(String q, Pageable pageable) {
+        String[] qParts = q.split("\\s+");
+        String priceQuery = Arrays.stream(qParts).filter(kw -> !PriceUtil.parsePriceQuery(kw).isEmpty()).findFirst().orElse("");
+        String kwQuery = Arrays.stream(qParts).filter(kw -> !kw.contains("price")).collect(Collectors.joining(" "));
+        ArrayList<PriceConditionItem> items = PriceUtil.parsePriceQuery(priceQuery);
+        Double minPrice = items.stream().filter(item -> item.op.equals(">=")).map(item -> item.value).findFirst().orElse( 0.0);
+        Double maxPrice = items.stream().filter(item -> item.op.equals("<=")).map(item -> item.value).findFirst().orElse(Double.MAX_VALUE);
+        Specification<ProductData> spec = Specification.where(ProductSpecification.hasName(kwQuery))
+                .and(ProductSpecification.hasPrice(minPrice, maxPrice));
+        return productRepository.findAll(spec, pageable);
     }
 
     public List<ProductData> getProductsByKeyword(String keyword) throws Exception {
@@ -109,7 +123,7 @@ public class ProductService {
                     }
                 }
                 assert we != null;
-                responseProduct.setPrice(we.getText());
+                responseProduct.setPrice(Double.parseDouble(we.getText()));
 
                 we = WebDriverHelper.getRelatedElementIfExist(product, By.className("responsive-image--product-tile-image"));
                 assert we != null;
