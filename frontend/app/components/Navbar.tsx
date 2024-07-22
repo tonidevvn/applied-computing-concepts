@@ -11,11 +11,13 @@ export default function Navbar() {
             id: 1,
             link: '/',
             title: 'Home',
+            submenus: [],
         },
         {
             id: 2,
             link: 'data-validation',
             title: 'Data Validation',
+            submenus: [],
         },
         {
             id: 2,

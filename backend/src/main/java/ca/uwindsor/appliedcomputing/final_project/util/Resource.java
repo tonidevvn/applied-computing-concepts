@@ -86,7 +86,7 @@ public class Resource {
                 if (record.length == 5) {
                     responseProduct.setName(record[0]);
                     //responseProduct.setBrand(record[2]);
-                    responseProduct.setPrice(record[1]);
+                    responseProduct.setPrice(Double.parseDouble(record[1]));
                     responseProduct.setImage(record[2]);
                     responseProduct.setUrl(record[3]);
                     responseProduct.setDescription(record[4]);
