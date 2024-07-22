@@ -20,36 +20,30 @@ import InvertedIndex from '@/app/components/InvertedIndex'
 import { PageRankingDataType } from '@/app/types/pageranking'
 import FrequencyCount from './components/FrequencyCount'
 import AppAutoComplete from './components/AppAutoComplete'
-import {useAppStore} from "@/stores/app-store-provider";
-import {useDebounce} from "use-debounce";
+import { useAppStore } from '@/stores/app-store-provider'
+import { useDebounce } from 'use-debounce'
 
 export default function Products() {
     const [items, setItems] = useState<FoodItemType[]>([])
     const [loading, setLoading] = useState(false)
 
-    const { searchValue, setSearchValue } = useAppStore(
-        (state) => state,
-    )
+    const { searchValue, setSearchValue } = useAppStore((state) => state)
 
     const [page, setPage] = useState(1)
     const [limit, setLimit] = useState(10)
     const [total, setTotal] = useState(0)
 
     const { spellCheckOptions, setSpellCheckOptions } = useAppStore(
-        (state) => state,
+        (state) => state
     )
     const { invertedIndexData, setInvertedIndexData } = useAppStore(
-        (state) => state,
+        (state) => state
     )
     const { pageRankingResult, setPageRankingResult } = useAppStore(
-        (state) => state,
+        (state) => state
     )
-    const { topSearches, setTopSearches } = useAppStore(
-        (state) => state,
-    )
-    const { recentSearches, setRecentSearches } = useAppStore(
-        (state) => state,
-    )
+    const { topSearches, setTopSearches } = useAppStore((state) => state)
+    const { recentSearches, setRecentSearches } = useAppStore((state) => state)
 
     const onFetchProducts = async () => {
         try {
@@ -78,12 +72,18 @@ export default function Products() {
                     const response = await axios.get('/api/keyword-search', {
                         params: { q: debouncedSearchValue },
                     })
-                    const response2 = await axios.get('/api/keyword-search/list', {
-                        params: { q: 'top' },
-                    })
-                    const response3 = await axios.get('/api/keyword-search/list', {
-                        params: { q: 'recent' },
-                    })
+                    const response2 = await axios.get(
+                        '/api/keyword-search/list',
+                        {
+                            params: { q: 'top' },
+                        }
+                    )
+                    const response3 = await axios.get(
+                        '/api/keyword-search/list',
+                        {
+                            params: { q: 'recent' },
+                        }
+                    )
                     if (!!response.data) {
                         setTopSearches(response2.data)
                         setRecentSearches(response3.data)
@@ -205,10 +205,10 @@ export default function Products() {
                 </div>
                 <div className='col-span-2'>
                     {spellCheckOptions?.length > 0 && (
-                    <div className='bg-white rounded-lg p-6 mb-4'>
-                        <h1 className='text-3xl font-bold mb-4'>
-                            Spell Checking
-                        </h1>
+                        <div className='bg-white rounded-lg p-6 mb-4'>
+                            <h1 className='text-3xl font-bold mb-4'>
+                                Spell Checking
+                            </h1>
                             <div className='gap-4 my-4 items-center row-span-1'>
                                 <p className='text-lg md:col-span-1 my-4'>
                                     Do you mean:
@@ -227,34 +227,32 @@ export default function Products() {
                                     ))}
                                 </div>
                             </div>
-                    </div>
+                        </div>
                     )}
 
-                    {
-                        topSearches?.length > 0 && (
-                            <div className='row-span-3 bg-white rounded-lg p-6 mb-4'>
-                                <h1 className='text-3xl font-bold mb-4'>
-                                    Searches History
-                                </h1>
-                                <Table
-                                    columns={[
-                                        {
-                                            dataIndex: 'keyword',
-                                            title: 'Keyword',
-                                            ellipsis: true,
-                                            width: 250,
-                                        },
-                                        {
-                                            dataIndex: 'count',
-                                            title: 'Count',
-                                            width: 150,
-                                        },
-                                    ]}
-                                    dataSource={topSearches}
-                                />
-                            </div>
-                        )
-                    }
+                    {topSearches?.length > 0 && (
+                        <div className='row-span-3 bg-white rounded-lg p-6 mb-4'>
+                            <h1 className='text-3xl font-bold mb-4'>
+                                Searches History
+                            </h1>
+                            <Table
+                                columns={[
+                                    {
+                                        dataIndex: 'keyword',
+                                        title: 'Keyword',
+                                        ellipsis: true,
+                                        width: 250,
+                                    },
+                                    {
+                                        dataIndex: 'count',
+                                        title: 'Count',
+                                        width: 150,
+                                    },
+                                ]}
+                                dataSource={topSearches}
+                            />
+                        </div>
+                    )}
 
                     {pageRankingResult?.length > 0 && (
                         <div className='row-span-3 bg-white rounded-lg p-6 mb-4'>
@@ -288,7 +286,6 @@ export default function Products() {
                             />
                         </div>
                     )}
-                    <FrequencyCount />
                 </div>
             </div>
         </div>

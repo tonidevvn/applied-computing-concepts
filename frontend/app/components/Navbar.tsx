@@ -25,6 +25,12 @@ export default function Navbar() {
             title: 'Web Crawler',
             submenus: [],
         },
+        {
+            id: 3,
+            link: 'frequency-count',
+            title: 'Frequency Count',
+            submenus: [],
+        },
     ]
     // Function to hide nav on resize
     const handleResize = () => {
@@ -50,7 +56,9 @@ export default function Navbar() {
         return (
             <Flex vertical={true}>
                 {submenus.map(({ id, link, title }) => (
-                    <Link key={id} href={link}>{title}</Link>
+                    <Link key={id} href={link}>
+                        {title}
+                    </Link>
                 ))}
             </Flex>
         )

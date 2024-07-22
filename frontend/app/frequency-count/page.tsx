@@ -1,3 +1,5 @@
+'use client'
+
 import { Button, Form, Input } from 'antd'
 import axios from 'axios'
 import React, { useState } from 'react'
