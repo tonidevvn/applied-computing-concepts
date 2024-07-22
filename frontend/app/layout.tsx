@@ -29,16 +29,7 @@ export default function RootLayout({
                             <Layout>
                                 <AppHeader />
                                 <Content style={{ padding: '0 48px' }}>
-                                    <main
-                                        style={{
-                                            background: '#fff',
-                                            minHeight: '100vh',
-                                            padding: 24,
-                                            borderRadius: '20px',
-                                        }}
-                                    >
-                                        {children}
-                                    </main>
+                                    {children}
                                 </Content>
                                 <AppFooter />
                             </Layout>

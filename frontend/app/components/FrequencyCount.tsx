@@ -36,11 +36,11 @@ const FrequencyCount: React.FC = () => {
     }
 
     return (
-        <div>
+        <div className='bg-white rounded-lg p-6'>
             <h1>Search Frequency & Search Count</h1>
             <Form
                 name='basic'
-                labelCol={{ span: 8 }}
+                labelCol={{ span: 4 }}
                 wrapperCol={{ span: 16 }}
                 initialValues={{ remember: true }}
                 onFinish={onFinish}
@@ -79,7 +79,7 @@ const FrequencyCount: React.FC = () => {
                 </Form.Item>
             </Form>
             <div className='mt-6 w-full max-w-md bg-white p-6 rounded-lg shadow-md'>
-                {result.frequency ? (
+                {result.frequency !== null ? (
                     <div>
                         <p>
                             There are a total of {result.frequency} occurrences
