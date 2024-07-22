@@ -22,4 +22,9 @@ public class ProductSpecification {
             return criteriaBuilder.conjunction();
         };
     }
+
+    public static Specification<ProductData> hasExactPrice(Double price) {
+        return (root, query, criteriaBuilder) ->
+                criteriaBuilder.equal(root.get("price"), price);
+    }
 }
