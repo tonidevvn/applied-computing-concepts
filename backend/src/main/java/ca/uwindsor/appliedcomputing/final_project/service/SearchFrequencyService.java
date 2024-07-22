@@ -220,7 +220,7 @@ public class SearchFrequencyService {
      * @return a set of KeywordData representing the top recent search queries and their frequencies, in the same order as the input list
      */
     public static List<KeywordSearchData> topRecentSearchQueries() {
-        List<KeywordSearchData> response = new LinkedList<>();
+        List<KeywordSearchData> response = new ArrayList<>();
         for (String recentSearchQuery : recentSearchQueries) {
             KeywordSearchData kwData = new KeywordSearchData();
             String[] kwt = recentSearchQuery.split(",");

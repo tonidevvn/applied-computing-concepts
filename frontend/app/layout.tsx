@@ -7,6 +7,7 @@ import AppHeader from '@/app/components/AppHeader'
 import { Content } from 'antd/lib/layout/layout'
 import { Layout } from 'antd'
 import AppFooter from '@/app/components/AppFooter'
+import {AppStoreProvider} from "@/stores/app-store-provider";
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -23,19 +24,21 @@ export default function RootLayout({
     return (
         <html lang='en'>
             <body className={inter.className}>
-                <ThemeProvider>
-                    <main>
-                        <AntdRegistry>
-                            <Layout>
-                                <AppHeader />
-                                <Content style={{ padding: '0 48px' }}>
-                                    {children}
-                                </Content>
-                                <AppFooter />
-                            </Layout>
-                        </AntdRegistry>
-                    </main>
-                </ThemeProvider>
+                <AppStoreProvider>
+                    <ThemeProvider>
+                        <main>
+                            <AntdRegistry>
+                                <Layout>
+                                    <AppHeader />
+                                    <Content style={{ padding: '0 48px' }}>
+                                        {children}
+                                    </Content>
+                                    <AppFooter />
+                                </Layout>
+                            </AntdRegistry>
+                        </main>
+                    </ThemeProvider>
+                </AppStoreProvider>
             </body>
         </html>
     )

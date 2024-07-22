@@ -20,9 +20,10 @@ export default function Navbar() {
             submenus: [],
         },
         {
-            id: 2,
+            id: 3,
             link: 'web-crawler',
             title: 'Web Crawler',
+            submenus: [],
         },
     ]
     // Function to hide nav on resize
@@ -49,7 +50,7 @@ export default function Navbar() {
         return (
             <Flex vertical={true}>
                 {submenus.map(({ id, link, title }) => (
-                    <Link href={link}>{title}</Link>
+                    <Link key={id} href={link}>{title}</Link>
                 ))}
             </Flex>
         )
@@ -63,7 +64,7 @@ export default function Navbar() {
                         key={id}
                         className='nav-links px-4 cursor-pointer capitalize text-xl text-gray-500 hover:text-white duration-200 link-underline'
                     >
-                        {!!submenus ? (
+                        {!!submenus && !!submenus?.length ? (
                             <Popover
                                 placement='bottom'
                                 content={loadSubmenus(submenus)}
