@@ -16,8 +16,8 @@ import java.util.regex.Pattern;
 public class DataValidationService {
 
     // Regular expressions for validation
-    private static final Pattern NAME_PATTERN = Pattern.compile("^[a-zA-Z0-9\\s,'\\-_.()&%]+$");
-    private static final Pattern PRICE_PATTERN = Pattern.compile("^\\$\\d+(\\.\\d{1,2})?\\s*$");
+    private static final Pattern NAME_PATTERN = Pattern.compile("^[a-zA-Z0-9\\s,'\\-_.()&%/]+$");
+    private static final Pattern PRICE_PATTERN = Pattern.compile("^\\$?\\d+(\\.\\d{1,2})?\\s*$");
     private static final Pattern URL_PATTERN = Pattern.compile("^(https?|ftp)://[^\\s/$.?#].[^\\s]*$");
     private static final Pattern DESCRIPTION_PATTERN = Pattern.compile("^[\\p{L}\\p{N}\\p{P}\\p{Zs}\\r\\n\\u00A9\\u00AE]+$");
 
