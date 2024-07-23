@@ -31,7 +31,7 @@ export default function RootLayout({
                                 <Layout
                                     style={{
                                         backgroundImage: `url(${bg.src})`,
-                                        backgroundSize: 'fit',
+                                        backgroundSize: '100% 100%',
                                     }}
                                 >
                                     <AppHeader />

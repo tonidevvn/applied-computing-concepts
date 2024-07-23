@@ -1,8 +1,9 @@
 'use client'
 
-import { Alert, Button, Card, Form, Input, Skeleton } from 'antd'
+import {Alert, Button, Card, Form, Input, Skeleton, Space} from 'antd'
 import axios from 'axios'
 import React, { useState } from 'react'
+import Link from "next/link";
 
 type FieldType = {
     q?: string
@@ -18,6 +19,7 @@ type FrequencyCountType = {
 }
 
 const FrequencyCount: React.FC = () => {
+    const [form] = Form.useForm();
     const [error, setError] = useState('')
     const [loading, setLoading] = useState(false)
     const [result, setResult] = useState<FrequencyCountType>(
@@ -47,12 +49,31 @@ const FrequencyCount: React.FC = () => {
     const onFinishFailed = (errorInfo: any) => {
         console.error('Failed:', errorInfo)
     }
+
+    const demo1Handle = () => {
+        form.setFieldValue("q", "egg");
+        form.setFieldValue("url", "https://www.zehrs.ca/large-grade-a-eggs/p/20812144001_EA");
+    }
+
+    const demo2Handle = () => {
+        form.setFieldValue("q", "duck");
+        form.setFieldValue("url", "http://www.multifoodwindsor.com/ecommerce/grocery%E6%9D%82%E8%B4%A7/salted-duck-eggs-%E7%BA%A2%E5%BF%83%E9%B9%B9%E8%9B%8B.html");
+    }
+
     return (
         <div className='min-h-screen flex flex-col items-center justify-center p-4'>
             <Card
                 title='Search Frequency & Count'
                 className='bg-white p-4 rounded-lg shadow-md w-1/2 grid grid-rows-1 gap-4'
             >
+                <Space size={'small'} direction={'horizontal'} className={'pb-2 px-4'} >
+                    <Link href={'#demo1'} onClick={demo1Handle}>
+                        Demo 1
+                    </Link>
+                    <Link href={'#demo2'} onClick={demo2Handle}>
+                        Demo 2
+                    </Link>
+                </Space>
                 <Form
                     name='basic'
                     labelCol={{ span: 4 }}
@@ -60,6 +81,7 @@ const FrequencyCount: React.FC = () => {
                     onFinish={onFinish}
                     onFinishFailed={onFinishFailed}
                     autoComplete='off'
+                    form={form}
                 >
                     <Form.Item<FieldType>
                         label='Keyword'
@@ -90,7 +112,7 @@ const FrequencyCount: React.FC = () => {
                     </Form.Item>
 
                     <Form.Item className='text-center'>
-                        <Button type='primary' htmlType='submit'>
+                        <Button type='primary' htmlType='submit' loading={loading} >
                             Submit
                         </Button>
                     </Form.Item>
