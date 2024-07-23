@@ -10,7 +10,7 @@ public class ProductSpecification {
                 criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), "%" + name.toLowerCase() + "%");
     }
 
-    public static Specification<ProductData> hasPrice(Double minPrice, Double maxPrice) {
+    public static Specification<ProductData> hasPriceBetween(Double minPrice, Double maxPrice) {
         return (root, query, criteriaBuilder) -> {
             if (minPrice != null && maxPrice != null) {
                 return criteriaBuilder.between(root.get("price"), minPrice, maxPrice);
@@ -23,18 +23,18 @@ public class ProductSpecification {
         };
     }
 
-    public static Specification<ProductData> hasExactPrice(Double price) {
+    public static Specification<ProductData> hasPriceEqual(Double price) {
         return (root, query, criteriaBuilder) ->
                 criteriaBuilder.equal(root.get("price"), price);
     }
 
     public static Specification<ProductData> hasCategory(String category) {
         return (root, query, criteriaBuilder) ->
-                criteriaBuilder.equal(root.get("category"), category);
+                criteriaBuilder.equal(criteriaBuilder.lower(root.get("category")), category.toLowerCase());
     }
 
     public static Specification<ProductData> hasStore(String store) {
         return (root, query, criteriaBuilder) ->
-                criteriaBuilder.equal(root.get("store"), store);
+                criteriaBuilder.equal(criteriaBuilder.lower(root.get("store")), store.toLowerCase());
     }
 }
