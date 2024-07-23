@@ -20,6 +20,6 @@ public class SpellCheckingController {
     public List<String> getWordCompleteList(@RequestParam("word") String word) {
         List<DistanceEntry> lDE = spellCheckingService.spellChecking(word);
         // FIXME: make limit become a service parameter, default to 10
-        return lDE.stream().map(DistanceEntry::getWord).limit(5).toList();
+        return lDE.stream().map(DistanceEntry::getWord).limit(3).toList();
     }
 }
