@@ -69,12 +69,9 @@ public class ProductService {
         ArrayList<PriceConditionItem> items = PriceUtil.parsePriceQuery(priceQuery);
         Specification<ProductData> spec = Specification.where(ProductSpecification.hasName(kwQuery));
         if (!priceQuery.isBlank()) {
-            Double exactPrice = items.stream().filter(item -> item.op.equals("=")).map(item -> item.value).findFirst().orElse( null);
-            if (exactPrice != null) {
-                spec = spec.and(ProductSpecification.hasPriceEqual(exactPrice));
-            } else {
-                Double minPrice = items.stream().filter(item -> item.op.equals(">=")).map(item -> item.value).findFirst().orElse( 0.0);
-                Double maxPrice = items.stream().filter(item -> item.op.equals("<=")).map(item -> item.value).findFirst().orElse(Double.MAX_VALUE);
+            Double minPrice = items.stream().filter(item -> item.op.equals(">=")).map(item -> item.value).findFirst().orElse( 0.0);
+            Double maxPrice = items.stream().filter(item -> item.op.equals("<=")).map(item -> item.value).findFirst().orElse(Double.MAX_VALUE);
+            if (minPrice <= maxPrice) {
                 spec = spec.and(ProductSpecification.hasPriceBetween(minPrice, maxPrice));
             }
         }

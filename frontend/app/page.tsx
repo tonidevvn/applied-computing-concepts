@@ -163,7 +163,7 @@ export default function Products() {
         <div className='container p-2'>
             <div className='grid grid-rows gap-2'>
                 <Card title='Search'>
-                    <div className='grid grid-cols-4 items-center gap-4'>
+                    <div className='grid grid-cols-4 items-start gap-4'>
                         <AppAutoComplete
                             searchValue={searchValue}
                             setSearchValue={setSearchValue}
