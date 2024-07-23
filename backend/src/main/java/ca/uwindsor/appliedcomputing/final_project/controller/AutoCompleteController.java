@@ -18,6 +18,6 @@ public class AutoCompleteController {
 
     @GetMapping
     public List<String> getWordCompleteList(@RequestParam("prefix") String text) {
-        return wordCompletionService.getWordSuggestions(text).stream().map(WordFrequency::getWord).toList();
+        return wordCompletionService.getWordSuggestions(text);
     }
 }
