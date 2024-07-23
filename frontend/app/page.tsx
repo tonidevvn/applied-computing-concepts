@@ -48,6 +48,9 @@ export default function Products() {
     const { topSearches, setTopSearches } = useAppStore((state) => state)
     const { recentSearches, setRecentSearches } = useAppStore((state) => state)
 
+    const qParts = searchValue.toString().split(/\s+/);
+    const kwQuery = qParts.filter((w) => !w.match(/price:/)).join(" ");
+
     const onFetchProducts = async () => {
         try {
             const response = await axios.get('/api/product', {
@@ -111,7 +114,7 @@ export default function Products() {
     const onSpellCheck = async () => {
         try {
             const response = await axios.get('/api/spell-checking', {
-                params: { word: searchValue },
+                params: { word: kwQuery },
             })
             setSpellCheckOptions(response.data)
         } catch (error) {
@@ -122,7 +125,7 @@ export default function Products() {
     const onCheckInvertedIndex = async () => {
         try {
             const response = await axios.get('/api/inverted-index', {
-                params: { query: searchValue },
+                params: { query: kwQuery },
             })
             setInvertedIndexData(response.data)
         } catch (error) {
@@ -135,7 +138,7 @@ export default function Products() {
         try {
             setPageRankingResult([])
             const response = await axios.get('/api/page-ranking', {
-                params: { search: searchValue },
+                params: { search: kwQuery },
             })
 
             setPageRankingResult(response.data)

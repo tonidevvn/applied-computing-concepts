@@ -65,7 +65,7 @@ public class ProductService {
     public Page<ProductData> findProducts(String q, String category, String store, Pageable pageable) {
         String[] qParts = q.split("\\s+");
         String priceQuery = Arrays.stream(qParts).filter(kw -> !PriceUtil.parsePriceQuery(kw).isEmpty()).findFirst().orElse("");
-        String kwQuery = Arrays.stream(qParts).filter(kw -> !kw.contains(":")).collect(Collectors.joining(" "));
+        String kwQuery = Arrays.stream(qParts).filter(kw -> !kw.contains("price:")).collect(Collectors.joining(" "));
         ArrayList<PriceConditionItem> items = PriceUtil.parsePriceQuery(priceQuery);
         Specification<ProductData> spec = Specification.where(ProductSpecification.hasName(kwQuery));
         if (!priceQuery.isBlank()) {
