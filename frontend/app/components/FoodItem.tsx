@@ -19,7 +19,7 @@ const truncateText = (text: string, maxLength: number) => {
 function FoodItem({ items }: { items: FoodItemType[] }) {
     return (
         <div className='grid grid-cols-4 gap-6 p-6'>
-            {items &&
+            {items?.length !== 0 ? (
                 items.map((item, index) => (
                     <Tooltip title={item.description} key={index}>
                         <div
@@ -45,7 +45,14 @@ function FoodItem({ items }: { items: FoodItemType[] }) {
                             </div>
                         </div>
                     </Tooltip>
-                ))}
+                ))
+                ) : (
+                    <span className='text-gray-600'>
+                        No products found.
+                    </span>
+                )
+            }
+
         </div>
     )
 }
