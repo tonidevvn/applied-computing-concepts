@@ -5,7 +5,10 @@ import ca.uwindsor.appliedcomputing.final_project.dto.WebCrawlerData;
 import ca.uwindsor.appliedcomputing.final_project.service.KeywordService;
 import ca.uwindsor.appliedcomputing.final_project.service.SearchFrequencyService;
 import ca.uwindsor.appliedcomputing.final_project.service.WebCrawlerService;
+import ca.uwindsor.appliedcomputing.final_project.util.ValidatorUtil;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,7 +27,10 @@ public class FrequencyCountController {
     private WebCrawlerService webCrawlerService;
 
     @GetMapping
-    public KeywordSearchData getSearchFrequency(@RequestParam("q") String keywords, @RequestParam("url") String url) {
+    public ResponseEntity<KeywordSearchData> getSearchFrequency(@RequestParam("q") String keywords, @RequestParam("url") String url) {
+        if (!ValidatorUtil.isValidHtmlUrl(url)) {
+            return ResponseEntity.badRequest().build();
+        }
         KeywordSearchData searchFData = keywordService.setKeywordSearch(keywords);
         WebCrawlerData wcData = webCrawlerService.crawlWebUrl(url);
         // Split the keywords string into an array of search keywords
@@ -39,6 +45,6 @@ public class FrequencyCountController {
         }
         searchFData.setFrequency(frequencyTotal);
         searchFData.setUrl(url);
-        return searchFData;
+        return ResponseEntity.ok(searchFData);
     }
 }
