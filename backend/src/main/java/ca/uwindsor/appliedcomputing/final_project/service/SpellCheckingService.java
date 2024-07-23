@@ -1,5 +1,7 @@
 package ca.uwindsor.appliedcomputing.final_project.service;
 
+import ca.uwindsor.appliedcomputing.final_project.data_structure.CuckooHashTable;
+import ca.uwindsor.appliedcomputing.final_project.data_structure.StringHashFamily;
 import ca.uwindsor.appliedcomputing.final_project.dto.DistanceEntry;
 import ca.uwindsor.appliedcomputing.final_project.util.Resource;
 import org.springframework.stereotype.Service;
@@ -8,7 +10,6 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 
@@ -109,12 +110,12 @@ public class SpellCheckingService {
         return dp[iLen1][iLen2];
     }
 
-    private HashSet<String> uniqueKeywordFromCSV(Path filePath) {
+    private CuckooHashTable<String> uniqueKeywordFromCSV(Path filePath) {
         try {
             BufferedReader br = new BufferedReader(new FileReader(filePath.toFile()));
             br.readLine(); // ignore header
             String strLine;
-            HashSet<String> uniqueKeywords = new HashSet<>();
+            CuckooHashTable<String> uniqueKeywords = new CuckooHashTable<>(new StringHashFamily( 3 ));
             while ((strLine = br.readLine()) != null) {
                 // remove special characters from the line
                 strLine = strLine.replaceAll("[^\\w\\s]|\\d","");
@@ -125,7 +126,8 @@ public class SpellCheckingService {
                     if (strWord.isBlank()) {
                         continue;
                     }
-                    uniqueKeywords.add(strWord.toLowerCase());
+                    String lcWord = strWord.toLowerCase();
+                    uniqueKeywords.insert(lcWord);
                 }
             }
             return uniqueKeywords;
@@ -141,13 +143,12 @@ public class SpellCheckingService {
             return new ArrayList<>();
         }
         // build a vocabulary
-        List<String> hsVocabulary = uniqueKeywordFromCSV(Resource.getMergedDataSet())
-                .stream()
-                .toList();
+        CuckooHashTable<String> cHashTable = uniqueKeywordFromCSV(Resource.getMergedDataSet());
+//        List<String> hsVocabulary
 
         // calculate distances
         List<DistanceEntry> lDistanceWords = new ArrayList<>();
-        for (String word : hsVocabulary) {
+        for (String word : cHashTable.getAllKeys()) {
             int distance = editDistance(trimWord, word);
             DistanceEntry entry = new DistanceEntry(distance, word);
             lDistanceWords.add(entry);
