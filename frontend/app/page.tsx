@@ -234,15 +234,18 @@ export default function Products() {
                         <Card
                             title='Products'
                             actions={[
-                                <Pagination
-                                    className='inline-block'
-                                    current={page}
-                                    total={total}
-                                    onChange={onPaginationChange}
-                                    showSizeChanger
-                                    pageSizeOptions={['8', '16', '24']}
-                                    pageSize={size}
-                                />,
+                                items?.length !== 0 && (
+                                    // eslint-disable-next-line react/jsx-key
+                                    <Pagination
+                                        className='inline-block'
+                                        current={page}
+                                        total={total}
+                                        onChange={onPaginationChange}
+                                        showSizeChanger
+                                        pageSizeOptions={['8', '16', '24']}
+                                        pageSize={size}
+                                    />
+                                ),
                             ]}
                         >
                             <FoodItem items={items} />

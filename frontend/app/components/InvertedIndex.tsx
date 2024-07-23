@@ -16,11 +16,14 @@ function InvertedIndex({ data }: { data: InvertedIndexType[] }) {
 
     return (
         <Card title='Inverted Indexing'>
-            {data.length !== 0 ? (
+            {data?.length !== 0 ? (
                 <Table dataSource={data} columns={options}></Table>
             ) : (
-                <div>No Data</div>
-            )}
+                <div className='grid grid-cols-4 gap-6 p-6'>
+                    <span className='text-gray-600'>No Data.</span>
+                </div>
+
+                )}
         </Card>
     )
 }
