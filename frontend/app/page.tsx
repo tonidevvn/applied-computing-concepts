@@ -151,7 +151,7 @@ export default function Products() {
         setSize(pageSize)
     }
     if (loading) {
-        return <Skeleton />
+        return <Skeleton loading style={{ height: '100vh', color: 'black' }} />
     }
 
     return (
