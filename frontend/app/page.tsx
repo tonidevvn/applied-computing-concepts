@@ -12,6 +12,7 @@ import {
     Table,
     Button,
     Select,
+    Skeleton,
 } from 'antd'
 import axios from 'axios'
 import ProductSearch from '@/app/components/ProductSearch'
@@ -68,37 +69,27 @@ export default function Products() {
     }
 
     const [debouncedSearchValue] = useDebounce(searchValue, 200)
-
-    useEffect(() => {
-        const fetchSearchHistoryData = async () => {
-            try {
-                if (!!debouncedSearchValue) {
-                    const response = await axios.get('/api/keyword-search', {
-                        params: { q: debouncedSearchValue },
-                    })
-                    const response2 = await axios.get(
-                        '/api/keyword-search/list',
-                        {
-                            params: { q: 'top' },
-                        }
-                    )
-                    const response3 = await axios.get(
-                        '/api/keyword-search/list',
-                        {
-                            params: { q: 'recent' },
-                        }
-                    )
-                    if (!!response.data) {
-                        setTopSearches(response2.data)
-                        setRecentSearches(response3.data)
-                    }
+    const fetchSearchHistoryData = async () => {
+        try {
+            if (!!debouncedSearchValue) {
+                const response = await axios.get('/api/keyword-search', {
+                    params: { q: debouncedSearchValue },
+                })
+                const response2 = await axios.get('/api/keyword-search/list', {
+                    params: { q: 'top' },
+                })
+                const response3 = await axios.get('/api/keyword-search/list', {
+                    params: { q: 'recent' },
+                })
+                if (!!response.data) {
+                    setTopSearches(response2.data)
+                    setRecentSearches(response3.data)
                 }
-            } catch (error) {
-                console.error('Fetch error:', error)
             }
+        } catch (error) {
+            console.error('Fetch error:', error)
         }
-        fetchSearchHistoryData()
-    }, [debouncedSearchValue])
+    }
 
     useEffect(() => {
         onFetchProducts()
@@ -111,6 +102,7 @@ export default function Products() {
             onSpellCheck(),
             onCheckInvertedIndex(),
             onFetchPageRankingData(),
+            fetchSearchHistoryData(),
         ]).then(() => {
             setLoading(false)
         })
@@ -159,123 +151,109 @@ export default function Products() {
         setSize(pageSize)
     }
     if (loading) {
-        return <div>Loading...</div>
+        return <Skeleton />
     }
 
     return (
-        <div className='container mx-auto p-4'>
-            <div className='p-6 my-4 bg-white rounded-lg shadow-md'>
-                <h1 className='text-3xl font-bold mb-4'>Search Bar</h1>
-                <div className='grid grid-cols-4 items-center gap-4'>
-                    <AppAutoComplete
-                        searchValue={searchValue}
-                        setSearchValue={setSearchValue}
-                        placeholder='Search food items'
-                    />
-                    <Select
-                        value={category}
-                        options={[
-                            {
-                                value: '',
-                                label: 'All',
-                            },
-                            {
-                                value: 'Meat & Poultry',
-                                label: 'Meat & Poultry',
-                            },
-                            { value: 'Grocery', label: 'Grocery' },
-                            {
-                                value: 'Fish & Seafood',
-                                label: 'Fish & Seafood',
-                            },
-                            { value: 'Bakery', label: 'Bakery' },
-                            { value: 'Dairy & Eggs', label: 'Dairy & Eggs' },
-                            { value: 'Frozen Food', label: 'Frozen Food' },
-                        ]}
-                        onChange={(value) => setCategory(value)}
-                        placeholder='Category'
-                    />
-                    <Select
-                        value={store}
-                        options={[
-                            {
-                                value: '',
-                                label: 'All',
-                            },
-                            {
-                                value: 'multifood',
-                                label: 'Multifood',
-                            },
-                            { value: 'nofrills', label: 'NoFrills' },
-                            {
-                                value: 'foodbasic',
-                                label: 'FoodBasic',
-                            },
-                            {
-                                value: 'loblaws',
-                                label: 'Loblaws',
-                            },
-                            {
-                                value: 'zehrs',
-                                label: 'Zehrs',
-                            },
-                        ]}
-                        onChange={(value) => setStore(value)}
-                        placeholder='Store'
-                    />
-                    <button
-                        onClick={() => {
-                            onSearch()
-                        }}
-                        className='px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow hover:bg-blue-600 transition duration-200'
-                    >
-                        Search
-                    </button>
-                </div>
-            </div>
-
-            <div className='grid grid-row-4 grid-flow-col gap-4'>
-                <div
-                    className='row-span-4 col-span-6'
-                    style={{ width: '1000px' }}
-                >
-                    <div className='bg-white rounded-lg p-6 mb-4'>
-                        <h1 className='text-3xl font-bold mb-4'>Products</h1>
-                        <div className='flex flex-col gap-4'>
-                            <div className='overflow-auto'>
-                                <FoodItem items={items} />
-                            </div>
-                            <div className='flex justify-end'>
-                                <div className='mt-4'>
-                                    <Pagination
-                                        className='inline-block'
-                                        current={page}
-                                        total={total}
-                                        onChange={onPaginationChange}
-                                        showSizeChanger
-                                        pageSizeOptions={['8', '16', '24']}
-                                        pageSize={size}
-                                    />
-                                </div>
-                            </div>
-                        </div>
+        <div className='container mx-auto p-2'>
+            <div className='grid grid-rows gap-2'>
+                <Card title='Search'>
+                    <div className='grid grid-cols-4 items-center gap-4'>
+                        <AppAutoComplete
+                            searchValue={searchValue}
+                            setSearchValue={setSearchValue}
+                            placeholder='Search food items'
+                        />
+                        <Select
+                            value={category}
+                            options={[
+                                {
+                                    value: '',
+                                    label: 'All',
+                                },
+                                {
+                                    value: 'Meat & Poultry',
+                                    label: 'Meat & Poultry',
+                                },
+                                { value: 'Grocery', label: 'Grocery' },
+                                {
+                                    value: 'Fish & Seafood',
+                                    label: 'Fish & Seafood',
+                                },
+                                { value: 'Bakery', label: 'Bakery' },
+                                {
+                                    value: 'Dairy & Eggs',
+                                    label: 'Dairy & Eggs',
+                                },
+                                { value: 'Frozen Food', label: 'Frozen Food' },
+                            ]}
+                            onChange={(value) => setCategory(value)}
+                            placeholder='Category'
+                        />
+                        <Select
+                            value={store}
+                            options={[
+                                {
+                                    value: '',
+                                    label: 'All',
+                                },
+                                {
+                                    value: 'multifood',
+                                    label: 'Multifood',
+                                },
+                                { value: 'nofrills', label: 'NoFrills' },
+                                {
+                                    value: 'foodbasic',
+                                    label: 'FoodBasic',
+                                },
+                                {
+                                    value: 'loblaws',
+                                    label: 'Loblaws',
+                                },
+                                {
+                                    value: 'zehrs',
+                                    label: 'Zehrs',
+                                },
+                            ]}
+                            onChange={(value) => setStore(value)}
+                            placeholder='Store'
+                        />
+                        <button
+                            onClick={() => {
+                                onSearch()
+                            }}
+                            className='px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow hover:bg-blue-600 transition duration-200'
+                        >
+                            Search
+                        </button>
                     </div>
+                </Card>
 
-                    {invertedIndexData.length > 0 && (
+                <div className='grid grid-flow-col gap-2 grid-cols-7'>
+                    <div className='grid grid-rows col-span-5 gap-2'>
+                        <Card
+                            title='Products'
+                            actions={[
+                                <Pagination
+                                    className='inline-block'
+                                    current={page}
+                                    total={total}
+                                    onChange={onPaginationChange}
+                                    showSizeChanger
+                                    pageSizeOptions={['8', '16', '24']}
+                                    pageSize={size}
+                                />,
+                            ]}
+                        >
+                            <FoodItem items={items} />
+                        </Card>
+
                         <InvertedIndex data={invertedIndexData} />
-                    )}
-                </div>
-                <div className='col-span-2'>
-                    {spellCheckOptions?.length > 0 && (
-                        <div className='bg-white rounded-lg p-6 mb-4'>
-                            <h1 className='text-3xl font-bold mb-4'>
-                                Spell Checking
-                            </h1>
-                            <div className='gap-4 my-4 items-center row-span-1'>
-                                <p className='text-lg md:col-span-1 my-4'>
-                                    Do you mean:
-                                </p>
-                                <div className='grid grid-cols-2 md:grid-cols-3 gap-2 md:col-span-3'>
+                    </div>
+                    <div className='grid grid-rows col-span-2 gap-2'>
+                        <Card title={'Do you mean'}>
+                            {spellCheckOptions?.length > 0 ? (
+                                <div className='grid grid-cols-2 gap-2'>
                                     {spellCheckOptions.map((option, i) => (
                                         <button
                                             key={i}
@@ -288,66 +266,70 @@ export default function Products() {
                                         </button>
                                     ))}
                                 </div>
-                            </div>
-                        </div>
-                    )}
+                            ) : (
+                                <div>No suggestions</div>
+                            )}
+                        </Card>
 
-                    {topSearches?.length > 0 && (
-                        <div className='row-span-3 bg-white rounded-lg p-6 mb-4'>
-                            <h1 className='text-3xl font-bold mb-4'>
-                                Searches History
-                            </h1>
-                            <Table
-                                columns={[
-                                    {
-                                        dataIndex: 'keyword',
-                                        title: 'Keyword',
-                                        ellipsis: true,
-                                        width: 250,
-                                    },
-                                    {
-                                        dataIndex: 'count',
-                                        title: 'Count',
-                                        width: 150,
-                                    },
-                                ]}
-                                dataSource={topSearches}
-                            />
-                        </div>
-                    )}
+                        <Card title='Search History'>
+                            {topSearches?.length > 0 ? (
+                                <Table
+                                    columns={[
+                                        {
+                                            dataIndex: 'keyword',
+                                            title: 'Keyword',
+                                            ellipsis: true,
+                                            width: 250,
+                                        },
+                                        {
+                                            dataIndex: 'count',
+                                            title: 'Count',
+                                            width: 150,
+                                        },
+                                    ]}
+                                    dataSource={topSearches}
+                                />
+                            ) : (
+                                <div>No search history</div>
+                            )}
+                        </Card>
 
-                    {pageRankingResult?.length > 0 && (
-                        <div className='row-span-3 bg-white rounded-lg p-6 mb-4'>
-                            <h1 className='text-3xl font-bold mb-4'>
-                                Page Ranking
-                            </h1>
-                            <Table
-                                columns={[
-                                    {
-                                        dataIndex: 'url',
-                                        title: 'URL',
-                                        ellipsis: true,
-                                        width: 250,
-                                        render: (url: string) => (
-                                            <a
-                                                href={url}
-                                                target='_blank'
-                                                title={url}
-                                            >
-                                                {url}
-                                            </a>
-                                        ),
-                                    },
-                                    {
-                                        dataIndex: 'frequencyOfSearchKeyword',
-                                        title: 'Frequency',
-                                        width: 150,
-                                    },
-                                ]}
-                                dataSource={pageRankingResult}
-                            />
-                        </div>
-                    )}
+                        <Card
+                            title='Ranking Page'
+                            className='row-span-3 bg-white rounded-lg p-6 mb-4'
+                        >
+                            {pageRankingResult?.length > 0 ? (
+                                <Table
+                                    columns={[
+                                        {
+                                            dataIndex: 'url',
+                                            title: 'URL',
+                                            ellipsis: true,
+                                            width: 250,
+                                            render: (url: string) => (
+                                                <a
+                                                    href={url}
+                                                    target='_blank'
+                                                    title={url}
+                                                >
+                                                    {url}
+                                                </a>
+                                            ),
+                                        },
+                                        {
+                                            dataIndex:
+                                                'frequencyOfSearchKeyword',
+                                            title: 'Frequency',
+                                            width: 150,
+                                        },
+                                    ]}
+                                    dataSource={pageRankingResult}
+                                />
+                            ) : (
+                                <div>No ranking page</div>
+                            )}
+                        </Card>
+                    </div>
                 </div>
             </div>
         </div>

@@ -7,8 +7,8 @@ import AppHeader from '@/app/components/AppHeader'
 import { Content } from 'antd/lib/layout/layout'
 import { Layout } from 'antd'
 import AppFooter from '@/app/components/AppFooter'
-import {AppStoreProvider} from "@/stores/app-store-provider";
-
+import { AppStoreProvider } from '@/stores/app-store-provider'
+import bg from '../public/background.jpg'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
@@ -28,7 +28,12 @@ export default function RootLayout({
                     <ThemeProvider>
                         <main>
                             <AntdRegistry>
-                                <Layout>
+                                <Layout
+                                    style={{
+                                        backgroundImage: `url(${bg.src})`,
+                                        backgroundSize: 'fit',
+                                    }}
+                                >
                                     <AppHeader />
                                     <Content style={{ padding: '0 48px' }}>
                                         {children}

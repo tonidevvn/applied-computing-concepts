@@ -80,7 +80,12 @@ export default function Navbar() {
                                 <Link href='#'>{title}</Link>
                             </Popover>
                         ) : (
-                            <Link href={link}>{title}</Link>
+                            <Link
+                                href={link}
+                                style={{ color: 'white', fontSize: '16px' }}
+                            >
+                                {title}
+                            </Link>
                         )}
                     </li>
                 ))}

@@ -3,41 +3,68 @@
 import React, { useEffect } from 'react'
 import { WebCrawlerProps } from '../types/webcrawler'
 import axios from 'axios'
-import { Input } from 'antd'
-
+import { Alert, Button, Card, Form, Input, message, Skeleton } from 'antd'
+type FieldType = {
+    url?: string
+}
 function WebCrawler() {
-    const [searchValue, setSearchValue] = React.useState('')
-    const [result, setResult] = React.useState<WebCrawlerProps>({})
+    const [loading, setLoading] = React.useState(false)
+    const [error, setError] = React.useState('')
+    const [result, setResult] = React.useState<WebCrawlerProps>(
+        {} as WebCrawlerProps
+    )
 
-    const fetchData = async () => {
-        try {
-            const response = await axios.get('/api/web-crawler', {
-                params: { url: searchValue },
+    const fetchData = async (values: FieldType) => {
+        setError('')
+        setLoading(true)
+        setResult({} as WebCrawlerProps)
+        await axios
+            .get('/api/web-crawler', {
+                params: values,
             })
-            setResult(response.data)
-        } catch (error) {
-            console.error('Error fetching data:', error)
-        }
+            .then((res) => {
+                setResult(res.data)
+            })
+            .catch((err) => {
+                setError('Invalid URL. Please try again')
+                setResult({} as WebCrawlerProps)
+            })
+            .finally(() => {
+                setLoading(false)
+            })
     }
-
     return (
-        <div className='min-h-screen flex flex-col items-center justify-center bg-gray-100 p-4'>
-            <div className='bg-white p-6 rounded-lg shadow-md w-3/4 grid grid-rows-2 gap-4'>
-                <h1 className='text-2xl font-bold mb-6 text-center'>
-                    Web Crawler
-                </h1>
-                <Input
-                    value={searchValue}
-                    placeholder='Enter URL'
-                    onChange={(e) => setSearchValue(e.target.value)}
-                    className='mb-4 p-2 border rounded-lg w-full'
-                />
-                <button
-                    onClick={fetchData}
-                    className='w-full px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow hover:bg-blue-600 transition duration-200'
+        <div className='min-h-screen flex flex-col items-center justify-center p-4'>
+            <Card title='Web Crawler' className='w-1/2 '>
+                <Form
+                    name='basic'
+                    labelCol={{ span: 3 }}
+                    initialValues={{ remember: true }}
+                    onFinish={fetchData}
+                    // onFinishFailed={onFinishFailed}
+                    autoComplete='off'
                 >
-                    Search
-                </button>
+                    <Form.Item<FieldType>
+                        label='URL'
+                        name='url'
+                        rules={[
+                            {
+                                required: true,
+                                message: 'Please input your url!',
+                            },
+                        ]}
+                    >
+                        <Input />
+                    </Form.Item>
+
+                    <Form.Item className='text-center'>
+                        <Button type='primary' htmlType='submit'>
+                            Submit
+                        </Button>
+                    </Form.Item>
+                </Form>
+                {loading && <Skeleton loading />}
+                {error && <Alert message={error} type='error' />}
                 {result.time && (
                     <div className='mt-6'>
                         <p className='font-semibold'>Time:</p>
@@ -46,7 +73,7 @@ function WebCrawler() {
                         <p>{result.htmlContents}</p>
                     </div>
                 )}
-            </div>
+            </Card>
         </div>
     )
 }
