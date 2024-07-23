@@ -17,9 +17,7 @@ import org.openqa.selenium.WebElement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -67,12 +65,16 @@ public class ProductService {
     public Page<ProductData> findProducts(String q, String category, String store, Pageable pageable) {
         String[] qParts = q.split("\\s+");
         String priceQuery = Arrays.stream(qParts).filter(kw -> !PriceUtil.parsePriceQuery(kw).isEmpty()).findFirst().orElse("");
-        String kwQuery = Arrays.stream(qParts).filter(kw -> !kw.contains("price")).collect(Collectors.joining(" "));
+        String kwQuery = Arrays.stream(qParts).filter(kw -> !kw.contains("price:")).collect(Collectors.joining(" "));
         ArrayList<PriceConditionItem> items = PriceUtil.parsePriceQuery(priceQuery);
-        Double minPrice = items.stream().filter(item -> item.op.equals(">=")).map(item -> item.value).findFirst().orElse( 0.0);
-        Double maxPrice = items.stream().filter(item -> item.op.equals("<=")).map(item -> item.value).findFirst().orElse(Double.MAX_VALUE);
-        Specification<ProductData> spec = Specification.where(ProductSpecification.hasName(kwQuery))
-                .and(ProductSpecification.hasPrice(minPrice, maxPrice));
+        Specification<ProductData> spec = Specification.where(ProductSpecification.hasName(kwQuery));
+        if (!priceQuery.isBlank()) {
+            Double minPrice = items.stream().filter(item -> item.op.equals(">=")).map(item -> item.value).findFirst().orElse( 0.0);
+            Double maxPrice = items.stream().filter(item -> item.op.equals("<=")).map(item -> item.value).findFirst().orElse(Double.MAX_VALUE);
+            if (minPrice <= maxPrice) {
+                spec = spec.and(ProductSpecification.hasPriceBetween(minPrice, maxPrice));
+            }
+        }
         if (!category.isBlank()) {
             spec = spec.and(ProductSpecification.hasCategory(category));
         }

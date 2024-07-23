@@ -14,24 +14,19 @@ public class PriceUtil {
     }
 
     public static ArrayList<PriceConditionItem> parsePriceQuery(String query) {
-        Pattern pat = Pattern.compile("^price:((\\d*\\.\\d+|\\d+)?-(\\d*\\.\\d+|\\d+)?)|(\\d*\\.\\d+|\\d+)$");
+        Pattern pat = Pattern.compile("^price:((\\d*\\.\\d+|\\d+)?-(\\d*\\.\\d+|\\d+)?)$");
         Matcher mat = pat.matcher(query);
         if (!mat.find()) {
             return new ArrayList<>();
         } else {
             ArrayList<PriceConditionItem> items = new ArrayList<>();
-            if (mat.group(1) == null && mat.group(2) == null && mat.group(3) == null) {
-                PriceConditionItem item = new PriceConditionItem("=", Double.parseDouble(mat.group(0)));
+            if (mat.group(3) != null) {
+                PriceConditionItem item = new PriceConditionItem("<=", Double.parseDouble(mat.group(3)));
                 items.add(item);
-            } else {
-                if (mat.group(3) != null) {
-                    PriceConditionItem item = new PriceConditionItem("<=", Double.parseDouble(mat.group(3)));
-                    items.add(item);
-                }
-                if (mat.group(2) != null) {
-                    PriceConditionItem item = new PriceConditionItem(">=", Double.parseDouble(mat.group(2)));
-                    items.add(item);
-                }
+            }
+            if (mat.group(2) != null) {
+                PriceConditionItem item = new PriceConditionItem(">=", Double.parseDouble(mat.group(2)));
+                items.add(item);
             }
             return items;
         }
