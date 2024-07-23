@@ -127,6 +127,7 @@ export default function Products() {
             setInvertedIndexData(response.data)
         } catch (error) {
             console.error('Fetch error:', error)
+            setInvertedIndexData([])
         }
     }
 
@@ -140,6 +141,7 @@ export default function Products() {
             setPageRankingResult(response.data)
         } catch (error) {
             console.error('Fetch error:', error)
+            setPageRankingResult([])
         }
     }
 
@@ -155,7 +157,7 @@ export default function Products() {
     }
 
     return (
-        <div className='container mx-auto p-2'>
+        <div className='container p-2'>
             <div className='grid grid-rows gap-2'>
                 <Card title='Search'>
                     <div className='grid grid-cols-4 items-center gap-4'>
@@ -229,7 +231,7 @@ export default function Products() {
                     </div>
                 </Card>
 
-                <div className='grid grid-flow-col gap-2 grid-cols-7'>
+                <div className='grid grid-flow-col gap-2 grid-cols-8'>
                     <div className='grid grid-rows col-span-5 gap-2'>
                         <Card
                             title='Products'
@@ -253,7 +255,7 @@ export default function Products() {
 
                         <InvertedIndex data={invertedIndexData} />
                     </div>
-                    <div className='grid grid-rows col-span-2 gap-2'>
+                    <div className='grid grid-rows col-span-3 gap-2'>
                         <Card title={'Do you mean'}>
                             {spellCheckOptions?.length > 0 ? (
                                 <div className='grid grid-cols-2 gap-2'>

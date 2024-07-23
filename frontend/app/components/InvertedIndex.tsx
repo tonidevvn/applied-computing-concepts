@@ -6,7 +6,7 @@ function InvertedIndex({ data }: { data: InvertedIndexType[] }) {
     const options = [
         {
             dataIndex: 'docId',
-            title: 'Document ID',
+            title: 'Line Number',
         },
         {
             dataIndex: 'name',
@@ -22,8 +22,7 @@ function InvertedIndex({ data }: { data: InvertedIndexType[] }) {
                 <div className='grid grid-cols-4 gap-6 p-6'>
                     <span className='text-gray-600'>No Data.</span>
                 </div>
-
-                )}
+            )}
         </Card>
     )
 }

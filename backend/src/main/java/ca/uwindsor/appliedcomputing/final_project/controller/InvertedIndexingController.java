@@ -2,6 +2,7 @@ package ca.uwindsor.appliedcomputing.final_project.controller;
 
 import ca.uwindsor.appliedcomputing.final_project.service.InvertedIndexingService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -17,7 +18,10 @@ public class InvertedIndexingController {
     private InvertedIndexingService invertedIndexingService;
 
     @GetMapping
-    public Set<Map<String, String>> search(@RequestParam("query") String query) {
-        return invertedIndexingService.search(query);
+    public ResponseEntity<Set<Map<String, String>>> search(@RequestParam("query") String query) {
+        if (query == null || query.trim().isEmpty()) {
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(invertedIndexingService.search(query));
     }
 }
