@@ -3,23 +3,35 @@
 import React, { useEffect } from 'react'
 import { WebCrawlerProps } from '../types/webcrawler'
 import axios from 'axios'
-import { Input } from 'antd'
+import { Input, message } from 'antd'
 
 function WebCrawler() {
     const [searchValue, setSearchValue] = React.useState('')
-    const [result, setResult] = React.useState<WebCrawlerProps>({})
+    const [loading, setLoading] = React.useState(false)
+    const [error, setError] = React.useState('')
+    const [result, setResult] = React.useState<WebCrawlerProps>(
+        {} as WebCrawlerProps
+    )
 
     const fetchData = async () => {
-        try {
-            const response = await axios.get('/api/web-crawler', {
+        setError('')
+        setLoading(true)
+        setResult({} as WebCrawlerProps)
+        await axios
+            .get('/api/web-crawler', {
                 params: { url: searchValue },
             })
-            setResult(response.data)
-        } catch (error) {
-            console.error('Error fetching data:', error)
-        }
+            .then((res) => {
+                setResult(res.data)
+            })
+            .catch((err) => {
+                setError('Invalid URL. Please try again')
+                setResult({} as WebCrawlerProps)
+            })
+            .finally(() => {
+                setLoading(false)
+            })
     }
-
     return (
         <div className='min-h-screen flex flex-col items-center justify-center bg-gray-100 p-4'>
             <div className='bg-white p-6 rounded-lg shadow-md w-3/4 grid grid-rows-2 gap-4'>
@@ -38,6 +50,8 @@ function WebCrawler() {
                 >
                     Search
                 </button>
+                {loading && <p>Loading...</p>}
+                {error && <p className='text-red-500'>{error}</p>}
                 {result.time && (
                     <div className='mt-6'>
                         <p className='font-semibold'>Time:</p>
