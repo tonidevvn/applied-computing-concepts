@@ -24,25 +24,6 @@ public class KeywordSearchController {
         return keywordService.setKeywordSearch(searchKeyword);
     }
 
-    @GetMapping(path = "/frequency")
-    public KeywordSearchData getKeywordSearchFrequency(@RequestParam("q") String keywords, @RequestParam("url") String url) {
-        KeywordSearchData searchFData = keywordService.setKeywordSearch(keywords);
-        WebCrawlerData wcData = webCrawlerService.crawlWebUrl(url);
-        // Split the keywords string into an array of search keywords
-        String[] searchKeywords = keywords.split("\\s+");
-        String[] words = wcData.getHtmlContents().split("\\s+");
-
-        Map<String, Integer> wordsMap = SearchFrequencyService.extractKeywords(words);
-        // Calculate page ranks and return top-ranked product links
-        int frequencyTotal = 0;
-        for (String eachKw : searchKeywords) {
-            frequencyTotal += wordsMap.getOrDefault(eachKw.toLowerCase(), 0);
-        }
-        searchFData.setFrequency(frequencyTotal);
-        searchFData.setUrl(url);
-        return searchFData;
-    }
-
     @GetMapping(path = "/list")
     public List<KeywordSearchData> getKeywordSearchedList(@RequestParam("q") String type, @RequestParam(required = false, defaultValue = "10") int limit) throws Exception {
         if (type != null && type.equalsIgnoreCase("top")) {
