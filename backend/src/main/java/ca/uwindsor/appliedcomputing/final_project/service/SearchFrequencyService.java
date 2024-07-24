@@ -32,6 +32,45 @@ public class SearchFrequencyService {
      */
     public static final int MAX_DISPLAY_QUERIES = 10;
 
+    private static int[] right_most_occurrence;
+
+    // Preprocess pattern for Boyer-Moore
+    private static void preprocessPattern(String patt) {
+        int pattern_length = patt.length();
+        right_most_occurrence = new int[Character.MAX_VALUE + 1]; // Initialize right array
+        // Set default values
+        Arrays.fill(right_most_occurrence, -1);
+        for (int j = 0; j < pattern_length; j++) {
+            right_most_occurrence[patt.charAt(j)] = j; // To Set rightmost occurrences
+        }
+    }
+
+    // Boyer-Moore pattern search algorithm
+    public static int searchPattern(String text, String pattern) {
+        preprocessPattern(pattern);
+
+        text = text.toLowerCase(); // Convert text to lowercase
+        int text_length = text.length();
+        int pattern_length = pattern.length();
+        int count = 0;
+        int skip;
+
+        for (int i = 0; i <= text_length - pattern_length; i += skip) {
+            skip = 0;
+            for (int j = pattern_length - 1; j >= 0; j--) {
+                if (pattern.charAt(j) != text.charAt(i + j)) {
+                    skip = Math.max(1, j - right_most_occurrence[text.charAt(i + j)]); // Calculate skip value
+                    break;
+                }
+            }
+            if (skip == 0) {
+                count++; // Pattern found
+                skip = pattern_length; // Move to next match
+            }
+        }
+        return count; // Return total occurrences
+    }
+
     /**
      * A map storing the keyword frequencies for each URL.
      * The keys are keywords, and the values are maps that map URLs to the frequency of the keyword in that URL.
