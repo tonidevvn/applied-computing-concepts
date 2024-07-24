@@ -13,7 +13,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(path = "/api/products")
-public class ProductsScraperController {
+public class ProductsCrawlerController {
     @Autowired
     private ProductService productService;
 

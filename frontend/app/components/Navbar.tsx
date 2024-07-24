@@ -21,14 +21,20 @@ export default function Navbar() {
         },
         {
             id: 3,
+            link: 'frequency-count',
+            title: 'Frequency Count',
+            submenus: [],
+        },
+        {
+            id: 4,
             link: 'web-crawler',
             title: 'Web Crawler',
             submenus: [],
         },
         {
-            id: 3,
-            link: 'frequency-count',
-            title: 'Frequency Count',
+            id: 5,
+            link: 'product-crawler',
+            title: 'Product Crawler',
             submenus: [],
         },
     ]
