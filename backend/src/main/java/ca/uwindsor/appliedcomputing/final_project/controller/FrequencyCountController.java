@@ -1,8 +1,7 @@
 package ca.uwindsor.appliedcomputing.final_project.controller;
 
-import ca.uwindsor.appliedcomputing.final_project.dto.KeywordSearchData;
+import ca.uwindsor.appliedcomputing.final_project.dto.SearchFrequencyData;
 import ca.uwindsor.appliedcomputing.final_project.dto.WebCrawlerData;
-import ca.uwindsor.appliedcomputing.final_project.service.KeywordService;
 import ca.uwindsor.appliedcomputing.final_project.service.SearchFrequencyService;
 import ca.uwindsor.appliedcomputing.final_project.service.WebCrawlerService;
 import ca.uwindsor.appliedcomputing.final_project.util.ValidatorUtil;
@@ -14,36 +13,35 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Map;
-
+import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/api/frequency-count")
 public class FrequencyCountController {
-    @Autowired
-    private KeywordService keywordService;
 
     @Autowired
     private WebCrawlerService webCrawlerService;
 
     @GetMapping
-    public ResponseEntity<KeywordSearchData> getSearchFrequency(@RequestParam("q") String keywords, @RequestParam("url") String url) {
+    public ResponseEntity<KeywordSearchData> getSearchFrequency(@RequestParam("q") String keyword, @RequestParam("url") String url) {
         if (!ValidatorUtil.isValidHtmlUrl(url)) {
             return ResponseEntity.badRequest().build();
         }
-        KeywordSearchData searchFData = keywordService.setKeywordSearch(keywords);
+        SearchFrequencyData searchFData = new SearchFrequencyData();
         WebCrawlerData wcData = webCrawlerService.crawlWebUrl(url);
+        String htmlContents = wcData.getHtmlContents();
         // Split the keywords string into an array of search keywords
-        String[] searchKeywords = keywords.split("\\s+");
-        String[] words = wcData.getHtmlContents().split("\\s+");
+        // Method 1: using hashmap to track occurrences of keywords
+        // String[] words = wcData.getHtmlContents().split("\\s+");
+        // Map<String, Integer> wordsMap = SearchFrequencyService.extractKeywords(words);
+        // int occurrences = wordsMap.getOrDefault(keyword, 0);
 
-        Map<String, Integer> wordsMap = SearchFrequencyService.extractKeywords(words);
+        // Method 2: using BoyerMoore
+        int occurrences = SearchFrequencyService.searchPattern(htmlContents, keyword);
         // Calculate page ranks and return top-ranked product links
-        int frequencyTotal = 0;
-        for (String eachKw : searchKeywords) {
-            frequencyTotal += wordsMap.getOrDefault(eachKw.toLowerCase(), 0);
-        }
-        searchFData.setFrequency(frequencyTotal);
+        searchFData.setSearchTime(LocalDateTime.now().toString());
+        searchFData.setWord(keyword);
+        searchFData.setFrequency(occurrences);
         searchFData.setUrl(url);
         return ResponseEntity.ok(searchFData);
     }
