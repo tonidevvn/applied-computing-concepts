@@ -1,16 +1,10 @@
 package ca.uwindsor.appliedcomputing.final_project.service;
 
-import ca.uwindsor.appliedcomputing.final_project.data_structure.AVLTreeWordFrequency;
-import ca.uwindsor.appliedcomputing.final_project.data_structure.AVLTreeWordFrequency.AvlNode;
+import ca.uwindsor.appliedcomputing.final_project.data_structure.SplayTree;
+import ca.uwindsor.appliedcomputing.final_project.data_structure.SplayTreeNode;
 import ca.uwindsor.appliedcomputing.final_project.dto.KeywordSearchData;
-import ca.uwindsor.appliedcomputing.final_project.util.Sorting;
-import com.opencsv.CSVReader;
-import com.opencsv.exceptions.CsvException;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -65,7 +59,7 @@ public class SearchFrequencyService {
         return count; // Return total occurrences
     }
 
-    private static AVLTreeWordFrequency<String> searchFrequencyTree = new AVLTreeWordFrequency<>();
+    private static SplayTree<String> searchFrequencyTree = new SplayTree<>();
 
     private static final LinkedList<String> recentSearchQueries = new LinkedList<>();
 
@@ -113,16 +107,19 @@ public class SearchFrequencyService {
      */
     public static List<KeywordSearchData> topSearchQueries(int limit) {
         List<KeywordSearchData> kwsData = new ArrayList<>();
-        PriorityQueue<AvlNode<String>> maxHeap = new PriorityQueue<>((x, y) -> y.getFrequency() - x.getFrequency());
-        searchFrequencyTree.inOrderTraversal(maxHeap);
+        List<SplayTreeNode<String>> sortedNodes = searchFrequencyTree.getSortedNodesByFrequency();
 
-        for (int j = 0; j < limit && !maxHeap.isEmpty(); j++) {
-            AVLTreeWordFrequency.AvlNode<String> node = maxHeap.poll();
+        int count = 0;
+        for (SplayTreeNode<String> node : sortedNodes) {
             KeywordSearchData kwData = new KeywordSearchData();
-            kwData.setKeyword(node.getElement());
+            kwData.setKeyword(node.key);
             kwData.setCount(node.getFrequency());
             kwData.setSearchTime(LocalDateTime.now().toString());
             kwsData.add(kwData);
+            count ++;
+            if (count > limit) {
+                break;
+            }
         }
         return kwsData;
     }
