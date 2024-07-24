@@ -1,11 +1,11 @@
 package ca.uwindsor.appliedcomputing.final_project.controller;
 
-import ca.uwindsor.appliedcomputing.final_project.dto.SearchFrequencyData;
+import ca.uwindsor.appliedcomputing.final_project.dto.KeywordSearchData;
 import ca.uwindsor.appliedcomputing.final_project.dto.WebCrawlerData;
+import ca.uwindsor.appliedcomputing.final_project.service.KeywordService;
 import ca.uwindsor.appliedcomputing.final_project.service.SearchFrequencyService;
 import ca.uwindsor.appliedcomputing.final_project.service.WebCrawlerService;
 import ca.uwindsor.appliedcomputing.final_project.util.ValidatorUtil;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +18,8 @@ import java.time.LocalDateTime;
 @RestController
 @RequestMapping("/api/frequency-count")
 public class FrequencyCountController {
+    @Autowired
+    private KeywordService keywordService;
 
     @Autowired
     private WebCrawlerService webCrawlerService;
@@ -27,7 +29,7 @@ public class FrequencyCountController {
         if (!ValidatorUtil.isValidHtmlUrl(url)) {
             return ResponseEntity.badRequest().build();
         }
-        SearchFrequencyData searchFData = new SearchFrequencyData();
+        KeywordSearchData searchFData = keywordService.setKeywordSearch(keyword);
         WebCrawlerData wcData = webCrawlerService.crawlWebUrl(url);
         String htmlContents = wcData.getHtmlContents();
         // Split the keywords string into an array of search keywords
@@ -40,7 +42,7 @@ public class FrequencyCountController {
         int occurrences = SearchFrequencyService.searchPattern(htmlContents, keyword);
         // Calculate page ranks and return top-ranked product links
         searchFData.setSearchTime(LocalDateTime.now().toString());
-        searchFData.setWord(keyword);
+        searchFData.setKeyword(keyword);
         searchFData.setFrequency(occurrences);
         searchFData.setUrl(url);
         return ResponseEntity.ok(searchFData);
