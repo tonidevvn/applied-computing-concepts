@@ -31,7 +31,8 @@ export default function RootLayout({
                                 <Layout
                                     style={{
                                         backgroundImage: `url(${bg.src})`,
-                                        backgroundSize: '100% 100%',
+                                        backgroundSize: '100% auto',
+                                        backgroundRepeat: 'repeat-y'
                                     }}
                                 >
                                     <AppHeader />

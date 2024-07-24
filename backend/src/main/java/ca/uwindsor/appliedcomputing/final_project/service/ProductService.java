@@ -36,7 +36,7 @@ public class ProductService {
     private static final ScraperConfig scraperConfig = new ScraperConfig();
     private static WebDriver driver;
     private static WebDriverHelper webDriverHelper;
-
+    private static int DEMO_LIMIT = 2;
 
     //Reading data from property file to a list
     @Value("#{'${website.urls}'.split(',')}")
@@ -152,7 +152,7 @@ public class ProductService {
                 responseProduct = saveProduct(responseProduct);
                 responseProducts.add(responseProduct);
                 limitCheck++;
-                if (limitCheck > 5) {
+                if (limitCheck > DEMO_LIMIT) {
                     break;
                 }
             }
@@ -202,7 +202,7 @@ public class ProductService {
                 responseProduct = saveProduct(responseProduct);
                 responseProducts.add(responseProduct);
                 limitCheck++;
-                if (limitCheck > 5) {
+                if (limitCheck > DEMO_LIMIT) {
                     break;
                 }
             }
