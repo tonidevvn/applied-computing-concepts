@@ -8,7 +8,7 @@ import java.util.List;
 @Service
 public class KeywordService {
 
-    public List<KeywordSearchData> setKeywordSearched(String keyword) {
+    public KeywordSearchData setKeywordSearch(String keyword) {
         return SearchFrequencyService.performSearchQueries(keyword);
     }
 

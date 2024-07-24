@@ -5,7 +5,7 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
 
     try {
-        const response = await axios.get(`http://localhost:8080/api/keyword-search`, {
+        const response = await axios.get(`http://localhost:8080/api/keyword-search/count`, {
             params: searchParams
         });
         const data: string[] = response.data;

@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The WebCrawlerService class provides functionalities to initialize a web driver,
@@ -20,6 +22,8 @@ public class WebCrawlerService {
     private ScraperConfig scraperConfig;
 
     private static WebDriver driver;
+
+    private static Map<String, String> cachedContents = new HashMap<>();
 
     /**
      * Initializes the web driver if it has not been initialized yet.
@@ -49,12 +53,20 @@ public class WebCrawlerService {
      * @return a WebCrawlerData object containing the URL, time, and HTML contents
      */
     public WebCrawlerData crawlWebUrl(String url) {
-        webDriverInit();
-        WebCrawlerData data = new WebCrawlerData();
-        data.setUrl(url);
-        data.setTime(LocalDateTime.now().toString());
-        data.setHtmlContents(WebDriverHelper.crawlWebUrl(url));
-        webDriverRelease();
-        return data;
+        String urlLowerCase = url.toLowerCase();
+        String data = "";
+        if (!cachedContents.containsKey(urlLowerCase)) {
+            webDriverInit();
+            data = WebDriverHelper.crawlWebUrl(url);
+            cachedContents.put(urlLowerCase, data);
+            webDriverRelease();
+        } else {
+            data = cachedContents.get(urlLowerCase);
+        }
+        WebCrawlerData webCrawlerData = new WebCrawlerData();
+        webCrawlerData.setUrl(url);
+        webCrawlerData.setTime(LocalDateTime.now().toString());
+        webCrawlerData.setHtmlContents(data);
+        return webCrawlerData;
     }
 }

@@ -2,13 +2,13 @@ package ca.uwindsor.appliedcomputing.final_project.service;
 
 import ca.uwindsor.appliedcomputing.final_project.config.ScraperConfig;
 import ca.uwindsor.appliedcomputing.final_project.dto.MainPage;
+import ca.uwindsor.appliedcomputing.final_project.dto.PriceConditionItem;
 import ca.uwindsor.appliedcomputing.final_project.dto.ProductData;
 import ca.uwindsor.appliedcomputing.final_project.repository.ProductRepository;
-import ca.uwindsor.appliedcomputing.final_project.util.Sorting;
+import ca.uwindsor.appliedcomputing.final_project.spec.ProductSpecification;
+import ca.uwindsor.appliedcomputing.final_project.util.PriceUtil;
 import ca.uwindsor.appliedcomputing.final_project.util.WebDriverHelper;
-import com.opencsv.CSVReader;
-import com.opencsv.exceptions.CsvException;
-import com.sun.tools.javac.Main;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
@@ -16,16 +16,18 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.io.FileReader;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class ProductService {
     @Autowired
     private final ProductRepository productRepository;
@@ -55,75 +57,31 @@ public class ProductService {
         driver = null;
     }
 
-    public List<ProductData> getProducts() {
-        return getProducts(10);
-    }
-
-    public List<ProductData> getProducts(int limit) {
-        // re-update limit number
-        if (limit == -1)
-            limit = 100;
-        else if (limit <= 0)
-            limit = 10;
-
-        //List<ProductData> responseProducts = loadProductsFromCSV(limit);
-        return fetchProductList(limit);
-    }
-
-
     // Save operation
     ProductData saveProduct(ProductData product) {
         return productRepository.save(product);
     }
 
-    // Read operation
-    public List<ProductData> fetchProductList() {
-        return (List<ProductData>)
-                productRepository.findAll();
-    }
-
-    // Read operation
-    public List<ProductData> fetchProductList(int limit) {
-        int count = 0;
-        List<ProductData> productList = new ArrayList<>();
-        for (ProductData productData : fetchProductList()) {
-            if (count++ < limit) {
-                productList.add(productData);
+    public Page<ProductData> findProducts(String q, String category, String store, Pageable pageable) {
+        String[] qParts = q.split("\\s+");
+        String priceQuery = Arrays.stream(qParts).filter(kw -> !PriceUtil.parsePriceQuery(kw).isEmpty()).findFirst().orElse("");
+        String kwQuery = Arrays.stream(qParts).filter(kw -> !kw.contains("price:")).collect(Collectors.joining(" "));
+        ArrayList<PriceConditionItem> items = PriceUtil.parsePriceQuery(priceQuery);
+        Specification<ProductData> spec = Specification.where(ProductSpecification.hasName(kwQuery));
+        if (!priceQuery.isBlank()) {
+            Double minPrice = items.stream().filter(item -> item.op.equals(">=")).map(item -> item.value).findFirst().orElse( 0.0);
+            Double maxPrice = items.stream().filter(item -> item.op.equals("<=")).map(item -> item.value).findFirst().orElse(Double.MAX_VALUE);
+            if (minPrice <= maxPrice) {
+                spec = spec.and(ProductSpecification.hasPriceBetween(minPrice, maxPrice));
             }
         }
-        return productList;
-    }
-
-    public List<ProductData> loadProductsFromCSV(int limit) {
-        List<ProductData> responseProducts = new ArrayList<>();
-        try (CSVReader csvReader = new CSVReader(new FileReader(Paths.get(Main.class.getClassLoader().getResource("data/merged_dataset.csv").toURI()).toFile()))) {
-            List<String[]> records = csvReader.readAll();
-            records.remove(0); // Remove header row
-
-            int count = 0;
-            for (String[] record : records) {
-                ProductData responseProduct = new ProductData();
-                if (record.length == 5) {
-                    responseProduct.setName(record[0]);
-                    //responseProduct.setBrand(record[2]);
-                    responseProduct.setPrice(record[1]);
-                    responseProduct.setImage(record[2]);
-                    responseProduct.setUrl(record[3]);
-                    responseProduct.setDescription(record[4]);
-                    if (responseProduct.getName() != null && count++ < limit)
-                        responseProducts.add(responseProduct);
-                }
-            }
-            return responseProducts;
-        } catch (IOException | CsvException | URISyntaxException e) {
-            throw new RuntimeException(e);
+        if (!category.isBlank()) {
+            spec = spec.and(ProductSpecification.hasCategory(category));
         }
-    }
-
-    public List<ProductData> getSortedProductsByPrice(int type) {
-        List<ProductData> responseProducts = getProducts();
-        Sorting.quickSort(responseProducts, type);
-        return responseProducts;
+        if (!store.isBlank()) {
+            spec = spec.and(ProductSpecification.hasStore(store));
+        }
+        return productRepository.findAll(spec, pageable);
     }
 
     public List<ProductData> getProductsByKeyword(String keyword) throws Exception {
@@ -173,7 +131,7 @@ public class ProductService {
                     }
                 }
                 assert we != null;
-                responseProduct.setPrice(we.getText());
+                responseProduct.setPrice(Double.parseDouble(we.getText()));
 
                 we = WebDriverHelper.getRelatedElementIfExist(product, By.className("responsive-image--product-tile-image"));
                 assert we != null;

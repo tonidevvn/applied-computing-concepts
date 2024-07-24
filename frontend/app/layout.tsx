@@ -3,15 +3,16 @@ import { Inter } from 'next/font/google'
 import './globals.css'
 import { AntdRegistry } from '@ant-design/nextjs-registry'
 import { ThemeProvider } from './components/theme-provider'
-import AppHeader from "@/app/components/AppHeader";
-import {Content} from "antd/lib/layout/layout";
-import {Layout} from "antd";
-import AppFooter from "@/app/components/AppFooter";
-
+import AppHeader from '@/app/components/AppHeader'
+import { Content } from 'antd/lib/layout/layout'
+import { Layout } from 'antd'
+import AppFooter from '@/app/components/AppFooter'
+import { AppStoreProvider } from '@/stores/app-store-provider'
+import bg from '../public/background.jpg'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-    title: 'Demo App - Made by AlgorithmAvengers team',
+    title: 'Food Price Analysis',
     description: 'Demo app for advanced computing concepts',
 }
 
@@ -23,29 +24,27 @@ export default function RootLayout({
     return (
         <html lang='en'>
             <body className={inter.className}>
-                <ThemeProvider>
-                    <main>
-                        <AntdRegistry>
-                            <Layout>
-                                <AppHeader />
-                                <Content style={{padding: '0 48px'}}>
-                                    <main
-                                        style={{
-                                            background: '#fff',
-                                            minHeight: '100vh',
-                                            padding: 24,
-                                            borderRadius: '20px',
-                                        }}
-                                    >
+                <AppStoreProvider>
+                    <ThemeProvider>
+                        <main>
+                            <AntdRegistry>
+                                <Layout
+                                    style={{
+                                        backgroundImage: `url(${bg.src})`,
+                                        backgroundSize: '100% 100%',
+                                    }}
+                                >
+                                    <AppHeader />
+                                    <Content style={{ padding: '0 48px' }}>
                                         {children}
-                                    </main>
-                                </Content>
-                                <AppFooter />
-                            </Layout>
-                        </AntdRegistry>
-                    </main>
-                </ThemeProvider>
+                                    </Content>
+                                    <AppFooter />
+                                </Layout>
+                            </AntdRegistry>
+                        </main>
+                    </ThemeProvider>
+                </AppStoreProvider>
             </body>
         </html>
-)
+    )
 }

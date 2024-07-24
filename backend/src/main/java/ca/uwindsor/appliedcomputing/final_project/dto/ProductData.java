@@ -9,7 +9,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Entity
+@Entity(name = "product_data")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -19,7 +19,9 @@ public class ProductData {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private String price;
+    private String store;
+    private String category;
+    private Double price;
     private String image;
     private String url;
     private String description;

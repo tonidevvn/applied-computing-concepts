@@ -213,8 +213,7 @@ public class SearchFrequencyService {
      *
      * @return Set of Keyword Data
      */
-    public static List<KeywordSearchData> performSearchQueries(String query) {
-        List<KeywordSearchData> set = new ArrayList<>();
+    public static KeywordSearchData performSearchQueries(String query) {
         String now = LocalDateTime.now().toString();
         // Trim the search query before processing
         query = query.trim();
@@ -227,8 +226,7 @@ public class SearchFrequencyService {
         kwData.setKeyword(query);
         kwData.setCount(searchFrequencyTree.findFrequency(query));
         kwData.setSearchTime(now);
-        set.add(kwData);
-        return set;
+        return kwData;
     }
 
     /**
@@ -261,7 +259,7 @@ public class SearchFrequencyService {
      * @return a set of KeywordData representing the top recent search queries and their frequencies, in the same order as the input list
      */
     public static List<KeywordSearchData> topRecentSearchQueries() {
-        List<KeywordSearchData> response = new LinkedList<>();
+        List<KeywordSearchData> response = new ArrayList<>();
         for (String recentSearchQuery : recentSearchQueries) {
             KeywordSearchData kwData = new KeywordSearchData();
             String[] kwt = recentSearchQuery.split(",");
