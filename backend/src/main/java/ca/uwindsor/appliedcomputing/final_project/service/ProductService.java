@@ -1,7 +1,8 @@
 package ca.uwindsor.appliedcomputing.final_project.service;
 
 import ca.uwindsor.appliedcomputing.final_project.config.ScraperConfig;
-import ca.uwindsor.appliedcomputing.final_project.dto.MainPage;
+import ca.uwindsor.appliedcomputing.final_project.dto.webpage.WebPageMultiFood;
+import ca.uwindsor.appliedcomputing.final_project.dto.webpage.WebPageZehrs;
 import ca.uwindsor.appliedcomputing.final_project.dto.PriceConditionItem;
 import ca.uwindsor.appliedcomputing.final_project.dto.ProductData;
 import ca.uwindsor.appliedcomputing.final_project.repository.ProductRepository;
@@ -95,6 +96,8 @@ public class ProductService {
             driver.get(fullUrl);
             if (url.contains("zehrs")) {
                 extractDataFromZehrs(responseProducts);
+            } else if (url.contains("multifood")) {
+                extractDataFromMultifood(responseProducts);
             }
         }
         // release web driver
@@ -105,14 +108,15 @@ public class ProductService {
 
     private void extractDataFromZehrs(List<ProductData> responseProducts) {
         // Find product elements
-        MainPage mainPage = new MainPage(driver);
+        WebPageZehrs webPageZehrs = new WebPageZehrs(driver);
 
         int limitCheck = 1;
-        List<WebElement> searchProducts = mainPage.searchProducts;
+        List<WebElement> searchProducts = webPageZehrs.searchProducts;
         WebDriverHelper.waitInSeconds(10);
         for (WebElement product : searchProducts) {
-
             ProductData responseProduct = new ProductData();
+            responseProduct.setStore("zehrs");
+            responseProduct.setCategory("Misc");
             try {
                 WebElement we = product.findElement(By.cssSelector("span.product-name__item--name"));
                 if (we != null && !StringUtils.isEmpty(we.getText())) {
@@ -121,31 +125,73 @@ public class ProductService {
                     responseProduct.setName(we.getText());
                 }
 
-                try {
-                    we = product.findElement(By.cssSelector("span.selling-price-list__item__price--now-price__value"));
-                } catch (NoSuchElementException e) {
-                    try {
-                        we = product.findElement(By.cssSelector("span.selling-price-list__item__price--sale__value"));
-                    } catch (NoSuchElementException e2) {
-                        // do nothing
-                    }
-                }
+                we = WebDriverHelper.getRelatedElementIfExist(product, By.cssSelector(".selling-price-list__item >span .price__value"));
                 assert we != null;
-                responseProduct.setPrice(Double.parseDouble(we.getText()));
+                responseProduct.setPrice(Double.parseDouble(we.getText().replaceAll("[^\\d.]", "")));
 
-                we = WebDriverHelper.getRelatedElementIfExist(product, By.className("responsive-image--product-tile-image"));
+                we = WebDriverHelper.getRelatedElementIfExist(product, By.cssSelector(".responsive-image--product-tile-image"));
                 assert we != null;
                 WebDriverHelper.waitUntilElementPresent(we);
                 if (!StringUtils.isEmpty(we.getAttribute("src"))) {
                     responseProduct.setImage(we.getAttribute("src"));
                 }
 
-                we = WebDriverHelper.getRelatedElementIfExist(product, By.className("product-tile__details__info__name__link"));
+                we = WebDriverHelper.getRelatedElementIfExist(product, By.cssSelector(".product-tile__details__info__name__link"));
                 assert we != null;
                 WebDriverHelper.waitUntilElementPresent(we);
                 String productLink = we.getAttribute("href");
                 if (!StringUtils.isEmpty(productLink)) {
                     responseProduct.setUrl(productLink);
+                }
+            } catch (Exception ex) {
+                // do nothing
+            }
+
+            if (responseProduct.getName() != null) {
+                // save to H2
+                responseProduct = saveProduct(responseProduct);
+                responseProducts.add(responseProduct);
+                limitCheck++;
+                if (limitCheck > 5) {
+                    break;
+                }
+            }
+        }
+    }
+
+    private void extractDataFromMultifood(List<ProductData> responseProducts) {
+        // Find product elements
+        WebPageMultiFood webPage = new WebPageMultiFood(driver);
+
+        int limitCheck = 1;
+        List<WebElement> products = webPage.products;
+        WebDriverHelper.waitInSeconds(10);
+        for (WebElement product : products) {
+            ProductData responseProduct = new ProductData();
+            responseProduct.setStore("multifood");
+            responseProduct.setCategory("Misc");
+            try {
+                WebElement we = WebDriverHelper.getRelatedElementIfExist(product, By.cssSelector("h2.product-name"));
+                if (we != null) {
+                    // trick to load full element
+                    WebDriverHelper.moveToElement(we);
+                    responseProduct.setName(we.getText());
+                }
+
+                we = WebDriverHelper.getRelatedElementIfExist(product, By.cssSelector("span.price"));
+                if (we != null) {
+                    String refinedPrice = we.getText().replaceAll("[^\\d.]", "");
+                    responseProduct.setPrice(Double.parseDouble(refinedPrice));
+                }
+
+                we = WebDriverHelper.getRelatedElementIfExist(product, By.cssSelector(".product-image"));
+                if (we != null) {
+                    responseProduct.setUrl(we.getAttribute("href"));
+                }
+
+                we = WebDriverHelper.getRelatedElementIfExist(product, By.cssSelector(".product-image img"));
+                if (we != null) {
+                    responseProduct.setImage(we.getAttribute("src"));
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -156,32 +202,9 @@ public class ProductService {
                 responseProduct = saveProduct(responseProduct);
                 responseProducts.add(responseProduct);
                 limitCheck++;
-                if (limitCheck > 10) {
+                if (limitCheck > 5) {
                     break;
                 }
-            }
-        }
-
-        for (ProductData product : responseProducts) {
-            if (product.getUrl() != null) {
-                // get product details
-                try {
-                    WebDriverHelper.loadUrlAndWait(product.getUrl());
-                    WebElement disclaimerDiv = mainPage.productDisclaimer;
-                    WebDriverHelper.moveToElement(disclaimerDiv);
-                    WebDriverHelper.waitUntilElementPresent(disclaimerDiv);
-                    WebElement descriptionDiv = mainPage.productDescription;
-                    WebDriverHelper.waitUntilElementPresent(descriptionDiv);
-                    assert descriptionDiv != null;
-                    product.setDescription(descriptionDiv.getText().replaceAll("\n", " "));
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-                // && responseProduct.getBrand() != null && responseProduct.getPrice() != null && responseProduct.getImage() != null && responseProduct.getUrl() != null) {
-                // String[] data = { product.getName(), product.getPrice(), product.getImage(), product.getUrl(), product.getDescription() };
-                // writer.writeNext(data);
             }
         }
     }
