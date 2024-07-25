@@ -9,7 +9,7 @@ function SearchValidation({searchValue}:{searchValue: string}) {
     let parsedRes = "";
     const priceQuery = searchValue.split(/\s+/).filter((w) => w.match("price:")).join(" ")
     const query = searchValue.split(/\s+/).filter((w) => !w.match("price:")).join(" ")
-    const regex = /^price:((\d*\.\d+|\d+)?-(\d*\.\d+|\d+)?)/g;
+    const regex = /^price:((\d*\.\d+|\d+)?-(\d*\.\d+|\d+)?)$/g;
     const ms = priceQuery.matchAll(regex);
     // @ts-ignore
     for (const m of ms) {
