@@ -1,17 +1,17 @@
 package ca.uwindsor.appliedcomputing.final_project.controller;
 import ca.uwindsor.appliedcomputing.final_project.dto.KeywordSearchData;
-import ca.uwindsor.appliedcomputing.final_project.dto.WebCrawlerData;
 import ca.uwindsor.appliedcomputing.final_project.service.KeywordService;
-import ca.uwindsor.appliedcomputing.final_project.service.SearchFrequencyService;
 import ca.uwindsor.appliedcomputing.final_project.service.WebCrawlerService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping(path = "/api/keyword-search")
+@Slf4j
 public class KeywordSearchController {
     @Autowired
     private KeywordService keywordService;
@@ -20,8 +20,12 @@ public class KeywordSearchController {
     private WebCrawlerService webCrawlerService;
 
     @GetMapping(path = "/count")
-    public KeywordSearchData getKeywordSearchCount(@RequestParam("q") String searchKeyword) throws Exception {
-        return keywordService.setKeywordSearch(searchKeyword);
+    public ResponseEntity<KeywordSearchData> getKeywordSearchCount(@RequestParam("q") String searchKeyword) throws Exception {
+        if (searchKeyword == null || searchKeyword.trim().isEmpty()) {
+            log.error("Search query is empty or null.");
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(keywordService.setKeywordSearch(searchKeyword));
     }
 
     @GetMapping(path = "/list")

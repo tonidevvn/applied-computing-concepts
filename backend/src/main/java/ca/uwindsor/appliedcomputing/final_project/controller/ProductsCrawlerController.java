@@ -2,17 +2,20 @@ package ca.uwindsor.appliedcomputing.final_project.controller;
 
 import ca.uwindsor.appliedcomputing.final_project.dto.ProductData;
 import ca.uwindsor.appliedcomputing.final_project.service.ProductService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping(path = "/api/products")
+@Slf4j
 public class ProductsCrawlerController {
     @Autowired
     private ProductService productService;
@@ -29,8 +32,12 @@ public class ProductsCrawlerController {
     }
 
     @GetMapping(path = "/scraping")
-    public List<ProductData> getProductsByKeyword(@RequestParam("q") String searchKeyword) throws Exception {
-        return productService.getProductsByKeyword(searchKeyword);
+    public ResponseEntity<List<ProductData>> getProductsByKeyword(@RequestParam("q") String searchKeyword) throws Exception {
+        if (searchKeyword == null || searchKeyword.trim().isEmpty()) {
+            log.error("Search query is empty or null.");
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok(productService.getProductsByKeyword(searchKeyword));
     }
 
 }

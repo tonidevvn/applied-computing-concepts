@@ -129,7 +129,7 @@ public class ProductService {
                 assert we != null;
                 responseProduct.setPrice(Double.parseDouble(we.getText().replaceAll("[^\\d.]", "")));
 
-                we = WebDriverHelper.getRelatedElementIfExist(product, By.cssSelector("div[data-testid='product-image'] > img"));
+                we = WebDriverHelper.getRelatedElementIfExist(product, By.cssSelector("div[data-testid=\"product-image\"] > img"));
                 assert we != null;
                 WebDriverHelper.waitUntilElementPresent(we);
                 if (!StringUtils.isEmpty(we.getAttribute("src"))) {
