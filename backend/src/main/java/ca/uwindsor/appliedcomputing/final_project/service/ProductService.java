@@ -111,32 +111,32 @@ public class ProductService {
         WebPageZehrs webPageZehrs = new WebPageZehrs(driver);
 
         int limitCheck = 1;
-        List<WebElement> searchProducts = webPageZehrs.searchProducts;
+        List<WebElement> searchProducts = webPageZehrs.products;
         WebDriverHelper.waitInSeconds(10);
         for (WebElement product : searchProducts) {
             ProductData responseProduct = new ProductData();
             responseProduct.setStore("zehrs");
             responseProduct.setCategory("Misc");
             try {
-                WebElement we = product.findElement(By.cssSelector("span.product-name__item--name"));
+                WebElement we = WebDriverHelper.getRelatedElementIfExist(product, By.cssSelector("h3.chakra-heading"));
                 if (we != null && !StringUtils.isEmpty(we.getText())) {
                     // trick to load full element
                     WebDriverHelper.moveToElement(we);
                     responseProduct.setName(we.getText());
                 }
 
-                we = WebDriverHelper.getRelatedElementIfExist(product, By.cssSelector(".selling-price-list__item >span .price__value"));
+                we = WebDriverHelper.getRelatedElementIfExist(product, By.cssSelector("div[data-testid=\"price-product-tile\"] span > span"));
                 assert we != null;
                 responseProduct.setPrice(Double.parseDouble(we.getText().replaceAll("[^\\d.]", "")));
 
-                we = WebDriverHelper.getRelatedElementIfExist(product, By.cssSelector(".responsive-image--product-tile-image"));
+                we = WebDriverHelper.getRelatedElementIfExist(product, By.cssSelector("div[data-testid='product-image'] > img"));
                 assert we != null;
                 WebDriverHelper.waitUntilElementPresent(we);
                 if (!StringUtils.isEmpty(we.getAttribute("src"))) {
                     responseProduct.setImage(we.getAttribute("src"));
                 }
 
-                we = WebDriverHelper.getRelatedElementIfExist(product, By.cssSelector(".product-tile__details__info__name__link"));
+                we = WebDriverHelper.getRelatedElementIfExist(product, By.cssSelector("a.chakra-linkbox__overlay"));
                 assert we != null;
                 WebDriverHelper.waitUntilElementPresent(we);
                 String productLink = we.getAttribute("href");
