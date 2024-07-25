@@ -79,6 +79,7 @@ public class PageRankingService {
      * @return List of product links sorted by rank
      */
     public List<PageRankingData> calculatePageRanks(String[] searchKeywords, int limit) {
+        maxHeap.clear();
         // Iterate through each product in productKeywordFrequencies
         for (String productLink : productKeywordFrequencies.keySet()) {
             AVLTreeWordFrequency<String> keywordTree = productKeywordFrequencies.get(productLink);

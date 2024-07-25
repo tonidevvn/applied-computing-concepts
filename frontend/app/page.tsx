@@ -48,8 +48,8 @@ export default function Products() {
     const { topSearches, setTopSearches } = useAppStore((state) => state)
     const { recentSearches, setRecentSearches } = useAppStore((state) => state)
 
-    const qParts = searchValue.toString().split(/\s+/);
-    const kwQuery = qParts.filter((w) => !w.match(/price:/)).join(" ");
+    const qParts = searchValue.toString().split(/\s+/)
+    const kwQuery = qParts.filter((w) => !w.match(/price:/)).join(' ')
 
     const onFetchProducts = async () => {
         try {
@@ -140,8 +140,10 @@ export default function Products() {
             const response = await axios.get('/api/page-ranking', {
                 params: { search: kwQuery },
             })
-
-            setPageRankingResult(response.data)
+            const hasPageRank = response.data.filter(
+                (item) => item.frequencyOfSearchKeyword > 0
+            )
+            setPageRankingResult(hasPageRank)
         } catch (error) {
             console.error('Fetch error:', error)
             setPageRankingResult([])
