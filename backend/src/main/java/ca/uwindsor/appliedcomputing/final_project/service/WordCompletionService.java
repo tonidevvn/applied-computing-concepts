@@ -47,10 +47,13 @@ public class WordCompletionService {
      * @return a list of suggested words sorted by frequency in descending order
      */
     public List<String> getWordSuggestions(String prefix) {
+        List<String> prefixSplit = Arrays.stream(prefix.split(" ")).toList();
+        String finalPrefix = prefixSplit.getLast();
         try {
-            return wordFrequencies.search(prefix).stream()
+            return wordFrequencies.search(finalPrefix).stream()
                     .sorted(Comparator.comparingInt(RedBlackTreeNode::getCount).reversed())
                     .map(RedBlackTreeNode::getKey)
+                    .map(word -> String.join(" ", prefixSplit.subList(0, prefixSplit.size() - 1)) + " " + word)
                     .collect(Collectors.toList());
         } catch (Exception e) {
             e.printStackTrace();
