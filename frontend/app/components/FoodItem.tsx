@@ -36,9 +36,12 @@ function FoodItem({ items }: { items: FoodItemType[] }) {
                                 />
                             </div>
                             <div className='p-4'>
-                                <h3 className='text-green-700 text-xl font-bold'>
+                                <h3 className='text-green-700 text-xl font-bold mt-2'>
                                     ${item.price}
                                 </h3>
+                                <h4 className="mt-2">
+                                    {item.store}
+                                </h4>
                                 <h4 className='font-semibold text-lg mt-2'>
                                     {item.name}
                                 </h4>
@@ -46,8 +49,8 @@ function FoodItem({ items }: { items: FoodItemType[] }) {
                         </div>
                     </Tooltip>
                 ))
-                ) : (
-                    <span className='text-gray-600'>
+            ) : (
+              <span className='text-gray-600'>
                         No products found.
                     </span>
                 )
